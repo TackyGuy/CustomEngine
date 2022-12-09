@@ -1,0 +1,51 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"-std=c++17",
+				"-I${workspaceFolder}\\include",
+				"-I${workspaceFolder}\\include\\headers\\",
+				"-I${workspaceFolder}\\include\\headers\\core\\",
+				"-I${workspaceFolder}\\include\\headers\\core\\assets\\",
+				"-I${workspaceFolder}\\include\\headers\\core\\components\\",
+				"-I${workspaceFolder}\\include\\headers\\core\\ui\\",
+				"-I${workspaceFolder}\\include\\headers\\sandbox\\",
+				"-I${workspaceFolder}\\include\\sdl\\",
+				"-I${workspaceFolder}\\src\\",
+				"-I${workspaceFolder}\\src\\core\\",
+				"-I${workspaceFolder}\\src\\core\\assets\\",
+				"-I${workspaceFolder}\\src\\core\\components\\",
+				"-L${workspaceFolder}\\src",
+				"-L${workspaceFolder}/lib",
+				"${workspaceFolder}/src\\*.cpp",
+				"${workspaceFolder}/src\\core\\*.cpp",
+				"${workspaceFolder}/src\\core\\assets\\*.cpp",
+				"${workspaceFolder}/src\\core\\components\\*.cpp",
+				"-lmingw32",
+				"-lSDL2main",
+				"-lSDL2",
+				"-lSDL2_image",
+				"-lSDL2_ttf",
+				"-o",
+				"${workspaceFolder}\\${fileBasenameNoExtension}.exe"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:\\msys64\\mingw64\\bin\\g++.exe"
+		}
+	]
+}
