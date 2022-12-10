@@ -13,6 +13,7 @@ Game::~Game()
     
     m_window->cleanUp();
     TTF_Quit();
+    Mix_Quit();
     SDL_Quit();
 }
 
@@ -45,14 +46,20 @@ void Game::init(const char* title, int x, int y)
     
     if (TTF_Init() == -1)
         std::cout << "TTF_Init FAILED. ERROR: " << TTF_GetError() << std::endl;
+
+    Mix_Init(MIX_INIT_MP3);
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        std::cout << "Mix_Init FAILED. ERROR: " << Mix_GetError() << std::endl;
+
     
     m_window = std::make_shared<RenderWindow>(title, x, y, SCREEN_WIDTH, SCREEN_HEIGHT);
     windowRefreshRate = m_window->getRefreshRate();
 
-
     Loader::init(*m_window);
 
-    m_stage = new SandboxStage();
+    m_mixer = new AudioMixer(30);
+
+    m_stage = new SandboxStage(m_mixer);
     m_stage->preload();
 }
 

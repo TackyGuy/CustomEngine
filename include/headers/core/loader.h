@@ -6,8 +6,11 @@
 
 #include "renderwindow.h"
 #include "SDL_ttf.h"
+#include "audiomixer.h"
+#include "SDL_mixer.h"
 #include "asset.h"
 #include "spritesheetasset.h"
+#include "audioasset.h"
 #include "fontasset.h"
 
 namespace Core
@@ -19,6 +22,7 @@ namespace Core
             std::map<std::string, std::shared_ptr<Asset>> m_loadedAssets;
             bool m_isInitialized = false;
             RenderWindow m_window;
+            AudioMixer m_mixer;
 
             Loader(){};
 
@@ -41,6 +45,13 @@ namespace Core
                     font->setFont(TTF_OpenFont(font->getPath(), font->getSize()));
 
                     p_assetToLoad = font;
+                }
+                else if (p_assetToLoad->getType() == Asset::AudioAssetType)
+                {
+                    AudioAsset *audio = dynamic_cast<AudioAsset*>(p_assetToLoad);
+                    audio->setMusic(Mix_LoadMUS(audio->getPath()));
+
+                    p_assetToLoad = audio;
                 }
 
                 p_assetToLoad->setLoaded(true);

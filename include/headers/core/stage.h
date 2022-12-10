@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inputprovider.h"
+#include "audiomixer.h"
 #include "actormanager.h"
 #include "loader.h"
 
@@ -15,11 +16,13 @@ namespace Core
             const int stageWidth;
             const int stageHeight;
             const int tileSize;
+            
+            AudioMixer *_audioMixer = nullptr;
 
             Vector2 center() const;
         public:
             ~Stage(){};
-            Stage(int width, int height, int size) : stageWidth(width), stageHeight(height), tileSize(size)
+            Stage(int width, int height, int size, AudioMixer *mixer) : stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
             {
                 m_inputProvider = InputProvider();
                 m_inputProvider.initialize();
@@ -56,6 +59,7 @@ namespace Core
             }
 
             InputProvider *getInputProvider();
+            AudioMixer *getAudioMixer();
             const double getTime() const;
     };
 }

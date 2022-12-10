@@ -2,6 +2,7 @@
 using namespace Core;
 
 const size_t Asset::SpritesheetType = std::hash<std::string>{}("Spritesheet");
+const size_t Asset::AudioAssetType = std::hash<std::string>{}("Audio");
 const size_t Asset::FontAssetType = std::hash<std::string>{}("Font");
 const size_t Asset::NullType = std::hash<std::string>{}("Null");
 

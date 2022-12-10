@@ -4,8 +4,10 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "loader.h"
 #include "renderwindow.h"
+#include "audiomixer.h"
 #include "actormanager.h"
 #include "actor.h"
 #include "math.h"
@@ -45,6 +47,7 @@ class Game
         Stage *m_stage = nullptr;
 
         std::shared_ptr<RenderWindow> m_window;
+        AudioMixer *m_mixer = nullptr;
         int windowRefreshRate;
         GameState m_GameState;
 

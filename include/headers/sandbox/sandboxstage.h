@@ -23,7 +23,7 @@ namespace Sandbox
             Actor *_counter = nullptr;
         public: 
             ~SandboxStage(){};
-            SandboxStage() : Stage(32, 23, 32){};
+            SandboxStage(AudioMixer *mixer) : Stage(32, 23, 32, mixer){};
 
             void preload() override
             {
@@ -34,6 +34,7 @@ namespace Sandbox
                 Loader::loadAsset("voltorb", new SpritesheetAsset("res/sprites/placeholders/voltorb.png", 33, 33));
 
                 Loader::loadAsset("weiholmirRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 15));
+                Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3"));
             }
 
             void init() override
@@ -155,6 +156,7 @@ namespace Sandbox
                 buttonTest->setupButton(buttonTest->getComponent<ColliderComponent>(), buttonTest->getComponent<SpriteRendererComponent>(), nullptr);
 
                 setUI();
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music"));
 
                 Stage::init();
             }
