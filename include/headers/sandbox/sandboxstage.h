@@ -21,6 +21,8 @@ namespace Sandbox
     {
         private:
             Actor *_counter = nullptr;
+            std::vector<Actor*> tiles;
+            Actor *backgroundProp = nullptr;
         public: 
             ~SandboxStage(){};
             SandboxStage(AudioMixer *mixer) : Stage(32, 23, 32, mixer){};
@@ -34,16 +36,15 @@ namespace Sandbox
                 Loader::loadAsset("voltorb", new SpritesheetAsset("res/sprites/placeholders/voltorb.png", 33, 33));
 
                 Loader::loadAsset("weiholmirRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 15));
-                Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3"));
+                Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3", true));
             }
 
             void init() override
             {
                 std::cout << "initializing test stage" << std::endl;
-                std::vector<Actor*> tiles;
 
                 Sprite *backgroundTile = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(3).get();
-                Actor *backgroundProp = ActorManager::createActor<Actor>(Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
+                backgroundProp = ActorManager::createActor<Actor>(Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
                 backgroundProp->addComponent<SpriteRendererComponent>(SpriteRendererComponent(backgroundProp, backgroundTile));
                 const int numTiles = 16;
                 Sprite *groundTiles[numTiles] = 
@@ -156,6 +157,7 @@ namespace Sandbox
                 buttonTest->setupButton(buttonTest->getComponent<ColliderComponent>(), buttonTest->getComponent<SpriteRendererComponent>(), nullptr);
 
                 setUI();
+                _audioMixer->setVolume(3);
                 _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music"));
 
                 Stage::init();

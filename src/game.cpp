@@ -57,9 +57,10 @@ void Game::init(const char* title, int x, int y)
 
     Loader::init(*m_window);
 
-    m_mixer = new AudioMixer(30);
+    m_mixer = new AudioMixer(0.5);
 
-    m_stage = new SandboxStage(m_mixer);
+    // m_stage = new SandboxStage(m_mixer);
+    m_stage = new Demo1::VoltorbStage(m_mixer);
     m_stage->preload();
 }
 

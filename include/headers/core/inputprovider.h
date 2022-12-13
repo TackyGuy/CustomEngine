@@ -12,11 +12,13 @@ namespace Core
     class InputProvider
     {
         private:
-            Uint8* m_pPreviousInput = nullptr;
-            Uint8* m_pCurrentInput = nullptr;
+            Uint8 *_previousInput = nullptr;
+            Uint8 *_currentInput = nullptr;
 
             Uint32 m_mouseState;
             Vector2 m_mousePos;
+
+            UserInterface  *_currentHovered = nullptr;
             
         public:
             ~InputProvider(){}
@@ -27,6 +29,7 @@ namespace Core
             void handleInputs();
             void handleKeyboard();
             void handleMouse();
+            void handleEventsUI();
 
             bool isKeyTriggered(const SDL_Scancode keyCode) const;
             bool isKeyPressed(const SDL_Scancode keyCode) const;

@@ -6,7 +6,7 @@ void InputProvider::initialize()
     // Initialize the previous input array
     // memset(m_pPreviousInput, 0, sizeof(Uint8) * SDL_NUM_SCANCODES);
     // Copy the Keyboard state
-    m_pCurrentInput = const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
+    _currentInput = const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
 }
 void InputProvider::handleInputs()
 {
@@ -18,9 +18,9 @@ void InputProvider::handleInputs()
 void InputProvider::handleKeyboard()
 {
     // Copy the current inputs into the previous inputs
-    m_pPreviousInput = m_pCurrentInput;
+    _previousInput = _currentInput;
     // Copy the GetKeyboardState into the current inputs
-    m_pCurrentInput = const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
+    _currentInput = const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
 }
 void InputProvider::handleMouse()
 {
@@ -29,25 +29,39 @@ void InputProvider::handleMouse()
 
     m_mousePos.set(mouseX, mouseY);
 
-    if (isMouseButtonPressed(0))
+    handleEventsUI();
+}
+void InputProvider::handleEventsUI()
+{
+    BoundingBox mouseBox = BoundingBox(m_mousePos, Vector2(1, 1));
+    auto touchedElement = UIManager::checkOverlapWithUI(&mouseBox);
+
+    if (touchedElement != nullptr)
     {
-        BoundingBox mouseBox = BoundingBox(m_mousePos, Vector2(1, 1));
-        auto clickedElement = UIManager::checkOverlapWithUI(&mouseBox);
-        if (clickedElement != nullptr) clickedElement->onClick();
+        if (isMouseButtonPressed(0)) touchedElement->onClick();
+        else if (touchedElement != _currentHovered) touchedElement->onHoverBegin();
+        else touchedElement->onHover();
     }
+
+    if (_currentHovered != touchedElement) 
+    {
+        if (_currentHovered) _currentHovered->onHoverEnd();
+    }
+
+    _currentHovered = touchedElement;
 }
 
 bool InputProvider::isKeyTriggered(const SDL_Scancode keyCode) const
 {
-    return (m_pCurrentInput[keyCode] == 1 && m_pPreviousInput[keyCode] == 0);
+    return (_currentInput[keyCode] == 1 && _previousInput[keyCode] == 0);
 }
 bool InputProvider::isKeyPressed(const SDL_Scancode keyCode) const
 {
-    return (m_pCurrentInput[keyCode] == 1);
+    return (_currentInput[keyCode] == 1);
 }
 bool InputProvider::isKeyReleased(const SDL_Scancode keyCode) const
 {
-    return (m_pCurrentInput[keyCode] == 0 && m_pPreviousInput[keyCode] == 1);
+    return (_currentInput[keyCode] == 0 && _previousInput[keyCode] == 1);
 }
 
 bool InputProvider::isMouseButtonPressed(int mouseButton) const

@@ -22,6 +22,7 @@
 
 #include "stage.h"
 #include "sandboxstage.h"
+#include "voltorbstage.h"
 
 #include "utils.h"
 

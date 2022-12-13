@@ -19,10 +19,9 @@ namespace Core
     {
         private:
             static Loader instance;
-            std::map<std::string, std::shared_ptr<Asset>> m_loadedAssets;
+            std::map<std::string, std::shared_ptr<Asset>> _loadedAssets;
             bool m_isInitialized = false;
             RenderWindow m_window;
-            AudioMixer m_mixer;
 
             Loader(){};
 
@@ -49,7 +48,9 @@ namespace Core
                 else if (p_assetToLoad->getType() == Asset::AudioAssetType)
                 {
                     AudioAsset *audio = dynamic_cast<AudioAsset*>(p_assetToLoad);
-                    audio->setMusic(Mix_LoadMUS(audio->getPath()));
+                    if (audio->isMusic()) audio->setAudio(nullptr, Mix_LoadMUS(audio->getPath()));
+                    else audio->setAudio(Mix_LoadWAV(audio->getPath()), nullptr);
+                    
 
                     p_assetToLoad = audio;
                 }
@@ -57,7 +58,7 @@ namespace Core
                 p_assetToLoad->setLoaded(true);
                 std::cout << p_assetToLoad->getPath() << ": " << (bool)p_assetToLoad->isLoaded() << std::endl;
 
-                m_loadedAssets.emplace(key, p_assetToLoad);
+                _loadedAssets.emplace(key, p_assetToLoad);
 
                 return p_assetToLoad->isLoaded();
             }
@@ -65,11 +66,11 @@ namespace Core
             template <class T> 
             T* getAssetInternal(const std::string& key)
             {
-                Asset *asset = m_loadedAssets[key].get();
+                Asset *asset = _loadedAssets[key].get();
 
                 if (asset == nullptr)
                 {
-                    std::cout << "Couldn't fetch the asset '" << key << "'. Key doesn't exist." << std::endl;
+                    std::cout << "Couldn't fetch the asset '" << key << "' as it doesn't exist." << std::endl;
                     return nullptr;
                 }
                 else

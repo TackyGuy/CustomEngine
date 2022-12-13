@@ -1,11 +1,30 @@
 #include "audioasset.h"
 using namespace Core;
 
-void AudioAsset::setMusic(Mix_Music *music)
+void AudioAsset::setAudio(Mix_Chunk *sound, Mix_Music *music)
 {
-    _file = music;
+    if (sound) 
+    {
+        _sound = sound;
+        return;
+    }
+    if (music) 
+    {
+        _music = music;
+        return;
+    }
 }
+
 Mix_Music *AudioAsset::getMusic()
 {
-    return _file;
+    return _music;
+}
+Mix_Chunk *AudioAsset::getSoundChunk()
+{
+    return _sound;
+}
+
+const bool AudioAsset::isMusic() const
+{
+    return m_isMusic;
 }

@@ -15,6 +15,7 @@
 				"-I${workspaceFolder}\\include\\headers\\core\\assets\\",
 				"-I${workspaceFolder}\\include\\headers\\core\\components\\",
 				"-I${workspaceFolder}\\include\\headers\\core\\ui\\",
+				"-I${workspaceFolder}\\include\\headers\\demo\\",
 				"-I${workspaceFolder}\\include\\headers\\sandbox\\",
 				"-I${workspaceFolder}\\include\\sdl\\",
 				"-I${workspaceFolder}\\src\\",

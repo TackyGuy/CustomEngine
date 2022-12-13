@@ -19,6 +19,21 @@ namespace Core
              */
             virtual void onClick() = 0;
             /**
+             * @brief How the UI element should act when the hover starts
+             * 
+             */
+            virtual void onHoverBegin() = 0;
+            /**
+             * @brief How the UI element should act while being hovered
+             * 
+             */
+            virtual void onHover() = 0;
+            /**
+             * @brief How the UI element should act when the hover ends
+             * 
+             */
+            virtual void onHoverEnd() = 0;
+            /**
              * @brief Get the ColliderComponent object attached to the UI element.
              * 
              * @return ColliderComponent* a pointer to the ColliderComponent
