@@ -14,6 +14,8 @@ namespace Demo1
     {
         private:
             bool m_gameOver = false;
+            uint16_t m_currentScore;
+            uint16_t m_requiredScore;
             // Represents the game table
             std::vector<Actor*> _table;
             const int CARDS_PER_ROW = 5;
@@ -21,8 +23,6 @@ namespace Demo1
             std::array<std::array<int, 5>, 5> cardsArray;
 
             SDL_Color colorBlack = {0, 0, 0};
-
-            uint16_t m_currentScore;
         public:
             ~VoltorbStage(){};
             VoltorbStage(AudioMixer *mixer) : Stage(32, 23, 32, mixer){};
@@ -63,6 +63,8 @@ namespace Demo1
                 backgroundProp->addComponent<SpriteRendererComponent>(SpriteRendererComponent(backgroundProp, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(0).get()));
                 _table.emplace_back(backgroundProp);
 
+                m_requiredScore = 1;
+
                 placeCards();
             }
 
@@ -79,26 +81,35 @@ namespace Demo1
 
                 SpritesheetAsset *spritesheet = Loader::getAsset<SpritesheetAsset>("spritesheet");
 
-                // Creates the cards
-                for (int row = 0; row < CARDS_PER_ROW; row++)
+                // Creates the cards and wires
+                for (int x = 0; x < CARDS_PER_ROW; x++)
                 {
-                    for (int column = 0; column < CARDS_PER_COLUMN; column++)
+                    for (int y = 0; y < CARDS_PER_COLUMN; y++)
                     {
-                        Vector2 pos = Vector2(startX + row * (cardSize + margin), startY + column * (cardSize + margin));
+                        Vector2 pos = Vector2(startX + x * (cardSize + margin), startY + y * (cardSize + margin));
+                        // We create the visual wires here also
+                        Actor *wireY = ActorManager::createActor<Actor>(pos + Vector2(0, 15), Vector2(cardSize, cardSize));
+                        wireY->addComponent<SpriteRendererComponent>(SpriteRendererComponent(wireY, spritesheet->getSpriteAt(32 + x).get()));
+                        _table.emplace_back(wireY);
+
+                        Actor *wireX = ActorManager::createActor<Actor>(pos + Vector2(15, 0), Vector2(cardSize, cardSize));
+                        wireX->addComponent<SpriteRendererComponent>(SpriteRendererComponent(wireX, spritesheet->getSpriteAt(37 + y).get()));
+                        _table.emplace_back(wireX);
 
                         Card *card = ActorManager::createActor<Card>(pos, Vector2(cardSize, cardSize));
 
                         int cardIndex = distrCardFaces(randEngine);
-                        cardsArray[row].at(column) = cardIndex;
+                        cardsArray[x].at(y) = cardIndex;
+                        if (cardIndex < 4) m_requiredScore *= cardIndex;
 
                         int spriteOffset = 1;
-                        if (row == 0)
+                        if (x == 0)
                         {
-                            if (column > 0) spriteOffset += 5;
+                            if (y > 0) spriteOffset += 5;
                         }
                         else
                         {
-                            if (column == 0) spriteOffset += 10;
+                            if (y == 0) spriteOffset += 10;
                             else spriteOffset += 15;
                         }
 
@@ -109,7 +120,7 @@ namespace Demo1
                             spritesheet->getSpriteAt(spriteOffset).get(), 
                             spritesheet->getSpriteAt(21).get(),
                             Loader::getAsset<AudioAsset>(sfxName),
-                            (cardIndex == 4)
+                            cardIndex
                             );
 
                         _table.emplace_back(card);
@@ -156,13 +167,17 @@ namespace Demo1
 
                 Actor *hintCard = ActorManager::createActor<Actor>(position, size);
                 hintCard->addComponent<SpriteRendererComponent>(SpriteRendererComponent(hintCard, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(spriteIndex).get()));
+                _table.emplace_back(hintCard);
 
                 Actor *hintTextNum = ActorManager::createActor<Actor>(position + Vector2(40, 10), Vector2(12, 12));
                 std::string strNumCount = (sumNumbers <= 9) ? "0" + std::to_string(sumNumbers) : std::to_string(sumNumbers);
                 hintTextNum->addComponent<TextComponent>(TextComponent(hintTextNum, strNumCount.c_str(), colorBlack, font));
+                _table.emplace_back(hintTextNum);
 
                 Actor *hintTextVolt = ActorManager::createActor<Actor>(position + Vector2(55, 45), Vector2(15, 15));
                 hintTextVolt->addComponent<TextComponent>(TextComponent(hintTextVolt, std::to_string(sumVoltorbs).c_str(), colorBlack, font));
+                _table.emplace_back(hintTextVolt);
+
             }
 
             void update(double dt) override
@@ -170,6 +185,10 @@ namespace Demo1
                 if (!m_gameOver)
                 {
                     Stage::update(dt);
+                }
+                else
+                {
+                    resetTable();
                 }
             }
 
@@ -180,11 +199,27 @@ namespace Demo1
                     m_gameOver = true;
                     std::cout << "Game Over!" << std::endl;
                 }
+                else
+                {
+                    m_currentScore *= std::stoi(msg);
+                    if (m_currentScore == m_requiredScore) m_gameOver = true;
+                }
             }
 
-            void cleanTable()
+            void resetTable()
             {
+                // std::vector<Actor*> temp = _table;
+                for (int i = 0; i < _table.size(); i++)
+                {
+                    ActorManager::deleteActor(*_table[i]);
+                }
 
+                _table.clear();
+
+                m_currentScore = 0;
+                m_gameOver = false;
+
+                createTable();
             }
     };
 }

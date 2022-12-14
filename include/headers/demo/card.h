@@ -20,6 +20,7 @@ namespace Demo1
 
             bool m_flipped = false;
             bool m_isBomb = false;
+            uint16_t value;
         public:
             ~Card(){}
             /**
@@ -48,7 +49,7 @@ namespace Demo1
                 Actor::start(stage);
             }
 
-            void setCard(Sprite *faceSprite, Sprite *backSprite, Sprite *hoverSprite, AudioAsset *sfx, bool isBomb = false)
+            void setCard(Sprite *faceSprite, Sprite *backSprite, Sprite *hoverSprite, AudioAsset *sfx, int val)
             {
                 _faceSprite = faceSprite;
                 _backSprite = backSprite;
@@ -56,12 +57,13 @@ namespace Demo1
 
                 _sfx = sfx;
 
-                m_isBomb = isBomb;
+                value = val;
+                m_isBomb = (val == 4);
             }
 
             void update(double dt, Stage& stage) override
             {
-                if (m_flipped && m_isBomb) stage.sendMessage("gameOver");
+                //
             } 
 
             /**
@@ -75,6 +77,11 @@ namespace Demo1
                     m_flipped = true;
                     _spriteRenderer->setSprite(_faceSprite);
                     _stage->getAudioMixer()->playSound(_sfx);
+                    if (m_isBomb) _stage->sendMessage("gameOver");
+                    else
+                    {
+                        _stage->sendMessage(std::to_string(value));
+                    }
                 }
             }
             /**
