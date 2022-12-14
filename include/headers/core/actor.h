@@ -29,6 +29,7 @@ namespace Core
             std::unordered_map<std::size_t, BaseComponent*> _components;
             TransformComponent *_transform = nullptr;
 
+            Stage *_stage = nullptr;
             Actor *_parent = nullptr;
             std::vector<Actor*> m_children;
 
@@ -59,7 +60,10 @@ namespace Core
 
             void init();
 
-            virtual void start(Stage& stage){}
+            virtual void start(Stage& stage)
+            {
+                _stage = &stage;
+            }
             virtual void update(double dt, Stage& stage)
             {
                 for (auto component : _components)

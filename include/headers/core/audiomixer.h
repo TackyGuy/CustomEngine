@@ -10,20 +10,23 @@ namespace Core
     class AudioMixer
     {
         private:
-            int m_volume = 0;
+            uint16_t m_musicVolume = 0;
+            uint16_t m_soundVolume = 0;
             AudioAsset *_currentMusic = nullptr;
         public:
             ~AudioMixer()
             {
                 if (!_currentMusic) Mix_FreeMusic(_currentMusic->getMusic());
             }
-            AudioMixer(int volume = 5) : m_volume(volume)
+            AudioMixer(int volume = 5) : m_musicVolume(volume), m_soundVolume(volume)
             {
 
             }
 
-            void setVolume(int volume);
-            const int getVolume() const;
+            void setMusicVolume(int volume);
+            const int getMusicVolume() const;
+            void setSoundVolume(int volume);
+            const int getSoundVolume() const;
 
             void playMusic(AudioAsset *music);
             void playSound(AudioAsset *sound);

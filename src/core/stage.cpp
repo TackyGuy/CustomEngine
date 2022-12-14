@@ -7,6 +7,12 @@ InputProvider *Stage::getInputProvider()
     return &m_inputProvider;
 }
 
+AudioMixer *Stage::getAudioMixer()
+{
+    return _audioMixer;
+}
+
+
 Vector2 Stage::center() const
 {
     Vector2 vec2 = Vector2((stageWidth * 0.5f) - 1, (stageHeight * 0.5f) - 1);

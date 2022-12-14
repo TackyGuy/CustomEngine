@@ -13,6 +13,7 @@ namespace Demo1
     class VoltorbStage: public Stage
     {
         private:
+            bool m_gameOver = false;
             // Represents the game table
             std::vector<Actor*> _table;
             const int CARDS_PER_ROW = 5;
@@ -32,16 +33,26 @@ namespace Demo1
 
                 Loader::loadAsset("musicMain", new AudioAsset("res/sounds/gameCorner.mp3", true));
                 Loader::loadAsset("musicSlots", new AudioAsset("res/sounds/slotsWin.mp3", true));
+                Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/demo/click.wav", false));
+                Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/demo/select.wav", false));
+                Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/demo/card1.wav", false));
+                Loader::loadAsset("sfxCard2", new AudioAsset("res/sounds/demo/card2.wav", false));
+                Loader::loadAsset("sfxCard3", new AudioAsset("res/sounds/demo/card3.wav", false));
+                Loader::loadAsset("sfxExplosion", new AudioAsset("res/sounds/demo/explosion.wav", false));
 
                 Loader::loadAsset("fontSmall", new FontAsset("res/fonts/weiholmir_regular.ttf", 12));
-                Loader::loadAsset("fontRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 16));
-                Loader::loadAsset("fontLarge", new FontAsset("res/fonts/weiholmir_regular.ttf", 24));
+                Loader::loadAsset("fontRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 14));
+                Loader::loadAsset("fontLarge", new FontAsset("res/fonts/weiholmir_regular.ttf", 18));
             }
 
             void init() override
             {
                 std::cout << "Welcome to Voltorb Flip!" << std::endl;
                 createTable();
+
+                _audioMixer->setMusicVolume(2);
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain"));
+                _audioMixer->setSoundVolume(1);
 
                 Stage::init();
             }
@@ -59,7 +70,7 @@ namespace Demo1
             {
                 std::random_device rd;
                 std::default_random_engine randEngine(rd());
-                std::uniform_int_distribution<int> distrCardFaces(0, 3);
+                std::uniform_int_distribution<int> distrCardFaces(1, 4);
 
                 int startX = 9 * tileSize;
                 int startY = 3 * tileSize;
@@ -67,14 +78,6 @@ namespace Demo1
                 int margin = 10;
 
                 SpritesheetAsset *spritesheet = Loader::getAsset<SpritesheetAsset>("spritesheet");
-                std::vector<Sprite*> possibleCards;
-                if (spritesheet)
-                {
-                    possibleCards.emplace_back(spritesheet->getSpriteAt(1).get());
-                    possibleCards.emplace_back(spritesheet->getSpriteAt(2).get());
-                    possibleCards.emplace_back(spritesheet->getSpriteAt(3).get());
-                    possibleCards.emplace_back(spritesheet->getSpriteAt(4).get());
-                }
 
                 // Creates the cards
                 for (int row = 0; row < CARDS_PER_ROW; row++)
@@ -85,25 +88,29 @@ namespace Demo1
 
                         Card *card = ActorManager::createActor<Card>(pos, Vector2(cardSize, cardSize));
 
-                        int cardValue = 0;
                         int cardIndex = distrCardFaces(randEngine);
-                        switch (cardIndex)
-                        {
-                            case 3:
-                                cardValue = 0;
-                            break;
-                            case 2:
-                                cardValue = 3;
-                            break;
-                            case 1:
-                                cardValue = 2;
-                            break;
-                            default:
-                                cardValue = 1;
-                        }
-                        cardsArray[row].at(column) = cardValue;
+                        cardsArray[row].at(column) = cardIndex;
 
-                        card->setFaceSprite(possibleCards[cardIndex]);
+                        int spriteOffset = 1;
+                        if (row == 0)
+                        {
+                            if (column > 0) spriteOffset += 5;
+                        }
+                        else
+                        {
+                            if (column == 0) spriteOffset += 10;
+                            else spriteOffset += 15;
+                        }
+
+                        std::string sfxName = (cardIndex == 4)? "sfxExplosion" : "sfxCard" + std::to_string(cardIndex);
+                        
+                        card->setCard(
+                            spritesheet->getSpriteAt(cardIndex + spriteOffset).get(), 
+                            spritesheet->getSpriteAt(spriteOffset).get(), 
+                            spritesheet->getSpriteAt(21).get(),
+                            Loader::getAsset<AudioAsset>(sfxName),
+                            (cardIndex == 4)
+                            );
 
                         _table.emplace_back(card);
                     }
@@ -121,11 +128,11 @@ namespace Demo1
                     for (int j = 0; j < CARDS_PER_COLUMN; j++)
                     {
                         int cardValue = cardsArray[i].at(j);
-                        if (cardValue == -1) totalVoltorbs++;
+                        if (cardValue == 4) totalVoltorbs++;
                         else totalNums += cardValue;
                     }
 
-                    createHint(totalNums, totalVoltorbs, Vector2(startX + i * (cardSize + margin), startY + CARDS_PER_COLUMN * (cardSize + margin)),Vector2(cardSize, cardSize));
+                    createHint(totalNums, totalVoltorbs, i + 27, Vector2(startX + i * (cardSize + margin), startY + CARDS_PER_COLUMN * (cardSize + margin)),Vector2(cardSize, cardSize));
                 }
 
                 for (int i = 0; i < CARDS_PER_COLUMN; i++)
@@ -135,25 +142,44 @@ namespace Demo1
                     for (int j = 0; j < CARDS_PER_ROW; j++)
                     {
                         int cardValue = cardsArray[j].at(i);
-                        if (cardValue == -1) totalVoltorbs++;
+                        if (cardValue == 4) totalVoltorbs++;
                         else totalNums += cardValue;
                     }
 
-                    createHint(totalNums, totalVoltorbs, Vector2(startX + CARDS_PER_ROW * (cardSize + margin), startY + i * (cardSize + margin)),Vector2(cardSize, cardSize));
+                    createHint(totalNums, totalVoltorbs, i + 22, Vector2(startX + CARDS_PER_ROW * (cardSize + margin), startY + i * (cardSize + margin)),Vector2(cardSize, cardSize));
                 }
             }
 
-            void createHint(int sumNumbers, int sumVoltorbs, Vector2 position, Vector2 size)
+            void createHint(int sumNumbers, int sumVoltorbs, int spriteIndex, Vector2 position, Vector2 size)
             {
                 auto font = Loader::getAsset<FontAsset>("fontRegular");
 
                 Actor *hintCard = ActorManager::createActor<Actor>(position, size);
-                hintCard->addComponent<SpriteRendererComponent>(SpriteRendererComponent(hintCard, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(5).get()));
+                hintCard->addComponent<SpriteRendererComponent>(SpriteRendererComponent(hintCard, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(spriteIndex).get()));
 
-                Actor *hintText = ActorManager::createActor<Actor>(position, Vector2(15, 15));
+                Actor *hintTextNum = ActorManager::createActor<Actor>(position + Vector2(40, 10), Vector2(12, 12));
+                std::string strNumCount = (sumNumbers <= 9) ? "0" + std::to_string(sumNumbers) : std::to_string(sumNumbers);
+                hintTextNum->addComponent<TextComponent>(TextComponent(hintTextNum, strNumCount.c_str(), colorBlack, font));
 
-                hintText->addComponent<TextComponent>(TextComponent(hintText, std::to_string(sumNumbers).c_str(), colorBlack, font));
-                // hintColumn->addComponent<TextComponent>(TextComponent(hintColumn, std::to_string(hintC.second).c_str(), colorBlack, font));
+                Actor *hintTextVolt = ActorManager::createActor<Actor>(position + Vector2(55, 45), Vector2(15, 15));
+                hintTextVolt->addComponent<TextComponent>(TextComponent(hintTextVolt, std::to_string(sumVoltorbs).c_str(), colorBlack, font));
+            }
+
+            void update(double dt) override
+            {
+                if (!m_gameOver)
+                {
+                    Stage::update(dt);
+                }
+            }
+
+            void sendMessage(std::string msg) override
+            {
+                if (msg == "gameOver")
+                {
+                    m_gameOver = true;
+                    std::cout << "Game Over!" << std::endl;
+                }
             }
 
             void cleanTable()

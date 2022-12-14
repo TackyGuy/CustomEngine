@@ -157,7 +157,7 @@ namespace Sandbox
                 buttonTest->setupButton(buttonTest->getComponent<ColliderComponent>(), buttonTest->getComponent<SpriteRendererComponent>(), nullptr);
 
                 setUI();
-                _audioMixer->setVolume(3);
+                _audioMixer->setMusicVolume(3);
                 _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music"));
 
                 Stage::init();
@@ -184,6 +184,11 @@ namespace Sandbox
                 _counter->getComponent<TextComponent>()->setText(str);
 
                 Stage::update(dt);
+            }
+
+            void sendMessage(std::string msg) override
+            {
+
             }
     };
 }

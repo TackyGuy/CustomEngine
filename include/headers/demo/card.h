@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include "button.h"
 #include "loader.h"
+#include "audioasset.h"
 
 using namespace Core;
 namespace Demo1
@@ -14,7 +14,12 @@ namespace Demo1
             Sprite *_hoverSprite = nullptr;
             Sprite *_faceSprite = nullptr;
 
+            AudioAsset *_sfx = nullptr;
+            AudioAsset *_flipSfx = nullptr;
+            AudioAsset *_selectSfx = nullptr;
+
             bool m_flipped = false;
+            bool m_isBomb = false;
         public:
             ~Card(){}
             /**
@@ -31,20 +36,33 @@ namespace Demo1
 
             void start(Stage& stage) override
             {
-                _backSprite = Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(6).get();
-                _hoverSprite = Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(5).get();
-                this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(this, _backSprite));
+                if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(this, _backSprite));
                 
                 this->addComponent<ColliderComponent>(ColliderComponent(this, this->getComponent<TransformComponent>(), "card"));
+                _flipSfx = Loader::getAsset<AudioAsset>("sfxClick");
+                _selectSfx = Loader::getAsset<AudioAsset>("sfxSelect");
 
 
                 setupButton(this->getComponent<ColliderComponent>(), this->getComponent<SpriteRendererComponent>(), nullptr);
+
+                Actor::start(stage);
             }
 
-            void setFaceSprite(Sprite *sprite)
+            void setCard(Sprite *faceSprite, Sprite *backSprite, Sprite *hoverSprite, AudioAsset *sfx, bool isBomb = false)
             {
-                _faceSprite = sprite;
+                _faceSprite = faceSprite;
+                _backSprite = backSprite;
+                _hoverSprite = hoverSprite;
+
+                _sfx = sfx;
+
+                m_isBomb = isBomb;
             }
+
+            void update(double dt, Stage& stage) override
+            {
+                if (m_flipped && m_isBomb) stage.sendMessage("gameOver");
+            } 
 
             /**
              * @brief We flip the card when it's clicked
@@ -52,8 +70,12 @@ namespace Demo1
              */
             void onClick() override
             {
-                m_flipped = true;
-                _spriteRenderer->setSprite(_faceSprite);
+                if (!m_flipped)
+                {
+                    m_flipped = true;
+                    _spriteRenderer->setSprite(_faceSprite);
+                    _stage->getAudioMixer()->playSound(_sfx);
+                }
             }
             /**
              * @brief We change the sprite of the card when hovered
@@ -61,7 +83,11 @@ namespace Demo1
              */
             void onHoverBegin() override
             {
-                if (!m_flipped) _spriteRenderer->setSprite(_hoverSprite);
+                if (!m_flipped) 
+                {
+                    _spriteRenderer->setSprite(_hoverSprite);
+                    _stage->getAudioMixer()->playSound(_selectSfx);
+                }
             }
             void onHover() override {}
             /**

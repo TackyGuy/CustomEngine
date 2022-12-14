@@ -58,6 +58,13 @@ namespace Core
                 }
             }
 
+            /**
+             * @brief Sends a message to the stage
+             * 
+             * @param msg The message as a string
+             */
+            virtual void sendMessage(std::string msg) = 0;
+
             InputProvider *getInputProvider();
             AudioMixer *getAudioMixer();
             const double getTime() const;
