@@ -18,9 +18,9 @@ namespace Core
             bool m_paused;
             std::string m_lastMessage;
             std::unordered_map<std::string, AnimationSequence> m_sequences;
-            AnimationSequence *m_currentSequence;
+            AnimationSequence *_currentSequence = nullptr;
 
-            SpriteRendererComponent *_spriteRenderer;
+            SpriteRendererComponent& spriteRenderer;
 
             bool isValid(const std::string& key);
         public:
@@ -30,23 +30,25 @@ namespace Core
                 return Type;
             }
 
-            ~AnimatorComponent(){}
+            ~AnimatorComponent()
+            {
+                delete _currentSequence;
+            }
             /**
              * @brief Construct a new Animator Component object.
              * 
              * @param broadcaster The actor that implements the IBroadcaster interface
              * @param spriteRenderer The SpriteRendererComponent to animate
              */
-            AnimatorComponent(BroadcasterInterface *broadcaster, SpriteRendererComponent *spriteRenderer) : BaseComponent(broadcaster)
-            {
-                _spriteRenderer = spriteRenderer;
-            }
+            AnimatorComponent(const BroadcasterInterface& p_broadcaster, SpriteRendererComponent& p_spriteRenderer) : 
+            BaseComponent(p_broadcaster), spriteRenderer(p_spriteRenderer)
+            {}
 
             virtual void update(double dt, Stage& stage) override
             {
-                _spriteRenderer->setSprite(m_currentSequence->getCurrentFrame());
+                spriteRenderer.setSprite(_currentSequence->getCurrentFrame());
 
-                auto strEvent = m_currentSequence->getEvent();
+                auto strEvent = _currentSequence->getEvent();
                 if (m_lastMessage != strEvent)
                 {
                     m_lastMessage = strEvent;
@@ -61,7 +63,7 @@ namespace Core
              * 
              * @param sequence The animation sequence to add
              */
-            void addSequence(const AnimationSequence& sequence);
+            void addSequence(const AnimationSequence sequence);
             /**
              * @brief Sets the current AnimationSequence to the desired one.
              * 
@@ -74,13 +76,13 @@ namespace Core
              * @param key The key of the animation sequence
              * @return AnimationSequence* 
              */
-            AnimationSequence *getSequence(const std::string& key);
+            std::shared_ptr<AnimationSequence> getSequence(const std::string& key);
             /**
              * @brief Get a pointer to the Current AnimationSequence object.
              * 
              * @return AnimationSequence* 
              */
-            AnimationSequence *getCurrentSequence();
+            std::shared_ptr<AnimationSequence> getCurrentSequence();
             /**
              * @brief Flips the SpriteRendererComponent on its horizontal axis.
              * 

@@ -14,11 +14,10 @@ namespace Core
     class ColliderComponent : public BaseComponent
     {
         private:
-            BoundingBox *m_aabb = nullptr;
-            std::vector<ColliderComponent*> _colliders;
+            BoundingBox m_aabb;
             std::string m_tag;
             
-            TransformComponent *_transform = nullptr;
+            const TransformComponent &transform;
             bool m_isTrigger = false;
             bool m_dirtyFlag = false;
         public:
@@ -32,21 +31,21 @@ namespace Core
             // Pointer to a transform component
             // SDL_Rect
             // Tag of the collider
-            ColliderComponent(BroadcasterInterface *broadcaster, TransformComponent *transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : BaseComponent(broadcaster), _transform(transform), m_tag(str), m_isTrigger(isTrigger)
-            {
-                m_aabb = new BoundingBox(transform->getPosition(), vec2);
-            }
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : 
+            BaseComponent(broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), vec2)
+            {}
             // Pointer to a transform component
             // Tag of the collider
-            ColliderComponent(BroadcasterInterface *broadcaster, TransformComponent *transform, const std::string& str = "", bool isTrigger = false) : BaseComponent(broadcaster), _transform(transform), m_tag(str), m_isTrigger(isTrigger)
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, const std::string& str = "", bool isTrigger = false) : 
+            BaseComponent(broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger)
             {
                 Vector2 extents(0, 0);
-                extents.add(transform->getScale());
+                extents.add(p_transform.getScale());
                 extents.multiply(0.5f);
-                m_aabb = new BoundingBox(transform->getPositionCentered(), extents);
+                m_aabb = BoundingBox(p_transform.getPositionCentered(), extents);
             }
 
-            BoundingBox *getAABB();
+            BoundingBox& getAABB();
             bool isDirty() const;
             void setDirty(bool val);
             const std::string& getTag() const;

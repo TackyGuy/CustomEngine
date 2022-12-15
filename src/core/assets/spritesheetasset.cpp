@@ -1,9 +1,9 @@
 #include "spritesheetasset.h"
 using namespace Core;
 
-void SpritesheetAsset::setTexture(SDL_Texture *p_tex)
+void SpritesheetAsset::setTexture(SDL_Texture *tex)
 {
-    p_texture = p_tex;
+    _texture = tex;
     initTexture();
 }
 
@@ -12,13 +12,13 @@ void SpritesheetAsset::initTexture()
     // std::cout << "initiating texture..." << std::endl;
     // The width and the height of the texture
     int w, h;
-    if (SDL_QueryTexture(p_texture, NULL, NULL, &w, &h))
+    if (SDL_QueryTexture(_texture, NULL, NULL, &w, &h))
     {
         std::cout << SDL_GetError() << std::endl;
         return;
     }
     
-    m_sprites.clear();
+    _sprites.clear();
 
     // TODO create another method that makes it prettier
 
@@ -30,13 +30,13 @@ void SpritesheetAsset::initTexture()
             {
                 std::cout << "adding sprite..." << std::endl;
                 SDL_Rect rect = {x * m_width, y * m_height, m_width, m_height};
-                auto sprite = std::make_shared<Sprite>(p_texture, rect);
-                m_sprites.push_back(sprite);
+                auto sprite = std::make_shared<Sprite>(_texture, rect);
+                _sprites.push_back(sprite);
             }
 
             if (m_limit != 0)
             {
-                if (m_sprites.size() >= m_limit)
+                if (_sprites.size() >= m_limit)
                 {
                     break;
                 }
@@ -51,13 +51,13 @@ void SpritesheetAsset::initTexture()
             {
                 // std::cout << "adding sprite..." << std::endl;
                 SDL_Rect rect = {x * m_width, y * m_height, m_width, m_height};
-                auto sprite = std::make_shared<Sprite>(p_texture, rect);
-                m_sprites.push_back(sprite);
+                auto sprite = std::make_shared<Sprite>(_texture, rect);
+                _sprites.push_back(sprite);
             }
 
             if (m_limit != 0)
             {
-                if (m_sprites.size() >= m_limit)
+                if (_sprites.size() >= m_limit)
                 {
                     break;
                 }
@@ -72,13 +72,13 @@ void SpritesheetAsset::initTexture()
 }
 SDL_Texture *SpritesheetAsset::getTexture()
 {
-    return p_texture;
+    return _texture;
 }
 
 std::shared_ptr<Sprite> SpritesheetAsset::getSpriteAt(const uint16_t& index)
 {
-    if (index < m_sprites.size() && index >= 0)
-        return m_sprites.at(index);
+    if (index < _sprites.size() && index >= 0)
+        return _sprites.at(index);
     else 
     {
         std::cout << "The index: '" << index << "' is invalid" << std::endl;
@@ -87,32 +87,32 @@ std::shared_ptr<Sprite> SpritesheetAsset::getSpriteAt(const uint16_t& index)
 }
 std::shared_ptr<Sprite> SpritesheetAsset::getCurrentSprite()
 {
-    if (m_currentSprite < m_sprites.size() && m_currentSprite >= 0)
-        return m_sprites.at(m_currentSprite);
+    if (m_currentSpriteIndex < _sprites.size() && m_currentSpriteIndex >= 0)
+        return _sprites.at(m_currentSpriteIndex);
     else return nullptr;
 }
-std::vector<Sprite*> SpritesheetAsset::getAllSprites()
+std::vector<std::shared_ptr<Sprite>> SpritesheetAsset::getAllSprites()
 {
-    std::vector<Sprite*> sprites;
+    std::vector<std::shared_ptr<Sprite>> sprites;
 
-    for (auto i = 0; i < m_sprites.size(); i++)
+    for (auto i = 0; i < _sprites.size(); i++)
     {
-        sprites.emplace_back(m_sprites.at(i).get());
+        sprites.emplace_back(_sprites.at(i));
     }
     
     return sprites;
 }
 uint16_t SpritesheetAsset::getCurrentSpriteID()
 {
-    return m_currentSprite;
+    return m_currentSpriteIndex;
 }
 uint16_t SpritesheetAsset::getSpriteCount()
 {
-    return m_sprites.size();
+    return _sprites.size();
 }
 void SpritesheetAsset::setCurrentSprite(const uint16_t& index)
 {
-    if (index < m_sprites.size() && index >= 0)
-        m_currentSprite = index;
+    if (index < _sprites.size() && index >= 0)
+        m_currentSpriteIndex = index;
     else std::cout << "The index: '" << index << "' is invalid" << std::endl;
 }

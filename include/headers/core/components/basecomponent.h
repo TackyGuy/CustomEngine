@@ -17,7 +17,7 @@ namespace Core
         private:
             bool m_active;
         protected:
-            BroadcasterInterface *_broadcaster;
+           const BroadcasterInterface& broadcaster;
         public:
             static const size_t Type;
 
@@ -26,7 +26,7 @@ namespace Core
              * 
              * @param broadcaster A reference to the actor that holds the component
              */
-            BaseComponent(BroadcasterInterface *broadcaster) : _broadcaster(broadcaster)
+            BaseComponent(const BroadcasterInterface& p_broadcaster) : broadcaster(p_broadcaster)
             {}
             virtual ~BaseComponent() = default;
 

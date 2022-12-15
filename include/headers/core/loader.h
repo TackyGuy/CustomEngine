@@ -33,8 +33,7 @@ namespace Core
                 if (p_assetToLoad->getType() == Asset::SpritesheetType)
                 {
                     SpritesheetAsset *sheet = dynamic_cast<SpritesheetAsset*>(p_assetToLoad);
-                    SDL_Texture *p_tex = m_window.loadTexture(sheet->getPath());
-                    sheet->setTexture(p_tex);
+                    sheet->setTexture(m_window.loadTexture(sheet->getPath()));
 
                     p_assetToLoad = sheet;
                 }
@@ -64,24 +63,21 @@ namespace Core
             }
 
             template <class T> 
-            T* getAssetInternal(const std::string& key)
+            std::shared_ptr<T> getAssetInternal(const std::string& key)
             {
-                Asset *asset = _loadedAssets[key].get();
+                auto asset = _loadedAssets[key];
 
-                if (asset == nullptr)
+                if (!asset)
                 {
                     std::cout << "Couldn't fetch the asset '" << key << "' as it doesn't exist." << std::endl;
                     return nullptr;
                 }
-                else
+                
+                if (asset->getType() == Asset::getTypeByClass<T>()) return std::static_pointer_cast<T>(asset);
+                else 
                 {
-                    if (asset->getType() == Asset::getTypeByClass<T>())
-                    return static_cast<T*>(asset);
-                    else 
-                    {
-                        std::cout << "Couldn't fetch the asset '" << key << "'. Type is invalid." << std::endl;
-                        return nullptr;
-                    }
+                    std::cout << "Couldn't fetch the asset '" << key << "'. Type is invalid." << std::endl;
+                    return nullptr;
                 }
             }
             
@@ -108,7 +104,7 @@ namespace Core
             }
 
             template <class T> 
-            static T* getAsset(const std::string& key)
+            static std::shared_ptr<T> getAsset(const std::string& key)
             {
                 return get().getAssetInternal<T>(key);
             }

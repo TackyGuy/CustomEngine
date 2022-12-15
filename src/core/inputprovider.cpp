@@ -34,9 +34,10 @@ void InputProvider::handleMouse()
 void InputProvider::handleEventsUI()
 {
     BoundingBox mouseBox = BoundingBox(m_mousePos, Vector2(1, 1));
-    auto touchedElement = UIManager::checkOverlapWithUI(&mouseBox);
+    auto touchedElement = UIManager::checkOverlapWithUI(mouseBox);
+    // std::cout << &*touchedElement << std::endl;
 
-    if (touchedElement != nullptr)
+    if (touchedElement)
     {
         if (isMouseButtonPressed(0)) touchedElement->onClick();
         else if (touchedElement != _currentHovered) touchedElement->onHoverBegin();

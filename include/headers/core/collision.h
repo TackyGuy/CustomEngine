@@ -15,17 +15,23 @@ namespace Core
         Node *Parent = nullptr;
         std::vector<Node*> Children;
 
-        BoundingBox *AABB = nullptr;
-        ColliderComponent *Collider = nullptr;
+        BoundingBox AABB;
+        std::shared_ptr<ColliderComponent> Collider = nullptr;
 
         bool IsDirty = false;
 
-        Node(Node *parent, ColliderComponent *collider) : Parent(parent), Collider(collider)
+        ~Node()
         {
-            AABB = collider->getAABB();
+            for (auto child : Children)
+            {
+                delete child;
+            }
         }
 
-        Node(Node *parent, BoundingBox *box) : Parent(parent), AABB(box)
+        Node(Node *parent, std::shared_ptr<ColliderComponent> collider) : Parent(parent), Collider(collider), AABB(collider->getAABB())
+        {}
+
+        Node(Node *parent, const BoundingBox& box) : Parent(parent), AABB(box)
         {}
 
         void attachChild(Node *childNode)
@@ -74,20 +80,20 @@ namespace Core
     class Collision
     {
         private:
-            inline static std::map<int, ColliderComponent*> _colliders;
+            inline static std::map<int, std::shared_ptr<ColliderComponent>> _colliders;
             inline static std::vector<Node*> dirtyNodes;
 
             inline static BoundingBox _worldAABB = BoundingBox(Vector2(1024/2, 720/2), Vector2(1024/2, 720/2));
-            inline static Node _rootNode = Node(nullptr, &_worldAABB);
+            inline static Node _rootNode = Node(nullptr, _worldAABB);
 
-            static void createNode(Node& node, ColliderComponent *collider);
-            static Node *getDeepestIntersectingNode(Node *root, ColliderComponent *collider);
+            static void createNode(Node& node, std::shared_ptr<ColliderComponent> collider);
+            static Node *getDeepestIntersectingNode(Node *root, std::shared_ptr<ColliderComponent> collider);
             static void updateNodeTree();
             static void updateNodes(Node *rootNode);
             static void handleDirtyNode(Node *dirtyNode);
-            static void splitBranch(Node& branch, ColliderComponent *collider);
+            static void splitBranch(Node& branch, std::shared_ptr<ColliderComponent> collider);
 
-            static std::vector<Node*> getIntersectingNodes(Node *node, ColliderComponent *collider);
+            static std::vector<Node*> getIntersectingNodes(Node *node, std::shared_ptr<ColliderComponent> collider);
         public:
             /**
              * @brief Check if two BoundingBoxes overlap each other
@@ -97,7 +103,7 @@ namespace Core
              * @return true if the BoundingBoxes overlap
              * @return false if they don't overlap
              */
-            static bool AABB(BoundingBox *boxA, BoundingBox *boxB);
+            static bool AABB(const BoundingBox& boxA, const BoundingBox& boxB);
 
             // Is the binary spatial partionning done
             inline static bool bspDone = false;
@@ -113,14 +119,14 @@ namespace Core
              * @param collider The ColliderComponent to check collision against
              * @return std::vector<ColliderComponent*> A vector holding all the found colliders.
              */
-            static std::vector<ColliderComponent*> getColliders(ColliderComponent *collider);
+            static std::vector<std::shared_ptr<ColliderComponent>> getColliders(std::shared_ptr<ColliderComponent> collider);
             /**
              * @brief Get the Closest ColliderComponent object to the specified ColliderComponent.
              * 
              * @param collider The ColliderComponent to check collision against
              * @return ColliderComponent* A pointer to the closest ColliderComponent found.
              */
-            static ColliderComponent *getClosestCollider(ColliderComponent *collider);
+            static std::shared_ptr<ColliderComponent> getClosestCollider(std::shared_ptr<ColliderComponent> collider);
             
 
             /**
@@ -129,7 +135,7 @@ namespace Core
              * @param id The id of the ColliderComponent as an integer
              * @param col The ColliderComponent
              */
-            static void addCollider(int id, ColliderComponent *col);
+            static void addCollider(int id, std::shared_ptr<ColliderComponent> col);
             /**
              * @brief Remove a collider from the vector of ColliderComponents.
              * 

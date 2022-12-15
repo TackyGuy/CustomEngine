@@ -13,7 +13,7 @@ void Sprite::setRect(int x, int y, int w, int h)
 
 SDL_Texture *Sprite::getTexture()
 {
-    return p_tex;
+    return _tex;
 }
 
 const bool Sprite::isKeepRatio() const

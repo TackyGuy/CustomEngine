@@ -15,7 +15,7 @@ namespace Core
                 return Type;
             }
 
-            NullComponent(BroadcasterInterface *broadcaster) : BaseComponent(broadcaster)
+            NullComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster)
             {}
             ~NullComponent()
             {}

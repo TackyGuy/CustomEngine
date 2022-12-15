@@ -3,7 +3,8 @@ using namespace Core;
 
 void Actor::init()
 {
-    this->addComponent<TransformComponent>(TransformComponent(this, _transform->getPosition(), _transform->getScale()));
+    this->addComponent<TransformComponent>(TransformComponent(*this, _transform->getPosition(), _transform->getScale()));
+    _transform.reset();
     _transform = this->getComponent<TransformComponent>();
 }
 

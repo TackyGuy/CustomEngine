@@ -15,7 +15,7 @@ bool AnimatorComponent:: isValid(const std::string& key)
     return true;
 }
 
-void AnimatorComponent::addSequence(const AnimationSequence& sequence)
+void AnimatorComponent::addSequence(const AnimationSequence sequence)
 {
     m_sequences.emplace(sequence.getName(), sequence);
 }
@@ -24,24 +24,26 @@ void AnimatorComponent::playSequence(const std::string& key)
 {
     if (!isValid(key)) return;
 
-    if (m_currentSequence == &m_sequences.at(key)) return;
+    if (_currentSequence == &m_sequences.at(key)) return;
 
-    m_currentSequence = &m_sequences.at(key);
-    m_currentSequence->reset();
+    _currentSequence = &m_sequences.at(key);
+    _currentSequence->reset();
 }
 
-AnimationSequence *AnimatorComponent::getSequence(const std::string& key)
+std::shared_ptr<AnimationSequence> AnimatorComponent::getSequence(const std::string& key)
 {
     if (!isValid(key)) return nullptr;
 
-    return &m_sequences.at(key);
+    return std::make_shared<AnimationSequence>(m_sequences.at(key));
 }
-AnimationSequence *AnimatorComponent::getCurrentSequence()
+std::shared_ptr<AnimationSequence> AnimatorComponent::getCurrentSequence()
 {
-    return m_currentSequence;
+    if (!_currentSequence) return nullptr;
+    
+    return std::make_shared<AnimationSequence>(*_currentSequence);
 }
 
 void AnimatorComponent::flipRenderer(bool val)
 {
-    _spriteRenderer->flip(val);
+    spriteRenderer.flip(val);
 }

@@ -11,11 +11,10 @@ namespace Sandbox
     class HeroInputComponent : public Core::InputComponent
     {
         private:
-            HeroStates *heroStates = nullptr;
+            HeroStates& heroStates;
 
-            Core::RigidbodyComponent *_rigidbody = nullptr;
-            Core::AnimatorComponent  *_animator = nullptr;
-            Core::ColliderComponent *_collider = nullptr;
+            std::shared_ptr<Core::RigidbodyComponent> _rigidbody = nullptr;
+            std::shared_ptr<Core::AnimatorComponent> _animator = nullptr;
 
             double m_runSpeed = 85;
 
@@ -24,8 +23,8 @@ namespace Sandbox
         public:
 
             ~HeroInputComponent(){};
-            HeroInputComponent(Core::BroadcasterInterface *broadcaster, HeroStates *states, Core::RigidbodyComponent *rigidbody, Core::AnimatorComponent *animator, Core::ColliderComponent *collider)
-            : Core::InputComponent(broadcaster), heroStates(states), _rigidbody(rigidbody), _animator(animator), _collider(collider)
+            HeroInputComponent(const Core::BroadcasterInterface& p_broadcaster, HeroStates& states, std::shared_ptr<Core::RigidbodyComponent> rigidbody, std::shared_ptr<Core::AnimatorComponent> animator)
+            : Core::InputComponent(p_broadcaster), heroStates(states), _rigidbody(rigidbody), _animator(animator)
             {}
 
             virtual void update(double dt, Core::Stage& stage) override
@@ -40,7 +39,7 @@ namespace Sandbox
                 else if (pInputProvider->isKeyPressed(SDL_SCANCODE_RIGHT))
                 {
                     velocity = Core::Vector2(m_runSpeed * dt, 0);
-                    if (!heroStates->hasFlag(COMBAT_STATE)) _animator->flipRenderer(false);
+                    if (!heroStates.hasFlag(COMBAT_STATE)) _animator->flipRenderer(false);
                 }
                 else if (pInputProvider->isKeyPressed(SDL_SCANCODE_DOWN))
                 {
@@ -49,24 +48,24 @@ namespace Sandbox
                 else if (pInputProvider->isKeyPressed(SDL_SCANCODE_LEFT))
                 {
                     velocity = Core::Vector2(-m_runSpeed * dt, 0);
-                    if (!heroStates->hasFlag(COMBAT_STATE)) _animator->flipRenderer(true);
+                    if (!heroStates.hasFlag(COMBAT_STATE)) _animator->flipRenderer(true);
                 }
 
-                if (!heroStates->hasFlag(COMBAT_STATE) && pInputProvider->isKeyPressed(SDL_SCANCODE_Z))
+                if (!heroStates.hasFlag(COMBAT_STATE) && pInputProvider->isKeyPressed(SDL_SCANCODE_Z))
                 {
                     double curTime = stage.getTime();
                     if (m_lastAttack + attackRate < curTime)
                     {
                         m_lastAttack = curTime;
-                        heroStates->setFlag(COMBAT_STATE);
+                        heroStates.setFlag(COMBAT_STATE);
                     }
                 }
 
-                if (velocity.getX() != 0 || velocity.getY() != 0) heroStates->setFlag(MOVE_STATE);
-                else heroStates->setFlag(MOVE_STATE, false);
+                if (velocity.getX() != 0 || velocity.getY() != 0) heroStates.setFlag(MOVE_STATE);
+                else heroStates.setFlag(MOVE_STATE, false);
 
                 // std::cout << *heroStates << std::endl;
-                if (heroStates->hasFlag(COMBAT_STATE)) 
+                if (heroStates.hasFlag(COMBAT_STATE)) 
                 {
                     velocity.multiply(0.35f);
                 }
@@ -81,7 +80,7 @@ namespace Sandbox
              */
             void animationManager(const Core::Vector2& velocity)
             {
-                if (heroStates->hasFlag(COMBAT_STATE))
+                if (heroStates.hasFlag(COMBAT_STATE))
                 {
                     if (_animator->getCurrentSequence()->getName().find("attack") == std::string::npos)
                     {
@@ -90,13 +89,13 @@ namespace Sandbox
                         else _animator->playSequence("attackSide");
                     }
                 }
-                else if (heroStates->hasFlag(MOVE_STATE))
+                else if (heroStates.hasFlag(MOVE_STATE))
                 {
                     if (velocity.getY() < 0) _animator->playSequence("runUp");
                     else if (velocity.getY() > 0) _animator->playSequence("runDown");
                     else _animator->playSequence("runSide");
                 }
-                else if (heroStates->hasFlag(IDLE_STATE)) _animator->playSequence("idle");
+                else if (heroStates.hasFlag(IDLE_STATE)) _animator->playSequence("idle");
             }
 
             virtual void OnMessage(const std::string& msg, const size_t sender) override
@@ -105,7 +104,7 @@ namespace Sandbox
                 {
                     if (msg == "attackEnd")
                     {
-                        heroStates->setFlag(COMBAT_STATE, false);
+                        heroStates.setFlag(COMBAT_STATE, false);
                     }
                     if (msg == "animationEnd")
                     {

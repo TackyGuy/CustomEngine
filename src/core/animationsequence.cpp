@@ -6,9 +6,9 @@ const std::string& AnimationSequence::getName() const
     return name;
 }
 
-Sprite *AnimationSequence::getCurrentFrame()
+std::shared_ptr<Sprite> AnimationSequence::getCurrentFrame()
 {
-    Sprite *frame = m_currentFrame;
+    std::shared_ptr<Sprite> frame = _currentFrame;
 
     getNextFrame();
     return frame;
@@ -19,7 +19,7 @@ void AnimationSequence::getNextFrame()
     double replays = (1.0f / m_speed);
     if (m_frameRepeats >= replays)
     {
-        if (m_currentID < (m_frames.size() - 1)) 
+        if (m_currentID < (_frames.size() - 1)) 
         {
             if (m_currentID == 0) 
             {
@@ -41,26 +41,26 @@ void AnimationSequence::getNextFrame()
     }
     else m_frameRepeats++;
 
-    m_currentFrame = m_frames.at(m_currentID);
-    m_currentEvent = m_frameEvents[m_currentFrame];
+    _currentFrame = _frames.at(m_currentID);
+    m_currentEvent = m_frameEvents[_currentFrame];
     // std::cout<< "frame: " << m_currentID << std::endl;
 }
-void AnimationSequence::addFrameToSequence(Sprite *sprite, uint16_t count, const std::string& event)
+void AnimationSequence::addFrameToSequence(std::shared_ptr<Sprite> sprite, uint16_t count, const std::string& event)
 {
     // We substract 1 to the counter to make the use of this service more readable and convenient
     auto max = count - 1;
     if (max > 0)
     {
-        for (auto i = 0; i < max; i++) m_frames.emplace_back(sprite);
+        for (auto i = 0; i < max; i++) _frames.emplace_back(sprite);
     }
-    else m_frames.emplace_back(sprite);
+    else _frames.emplace_back(sprite);
 
     m_frameEvents[sprite] = event;
 }
 
 uint16_t AnimationSequence::getSize()
 {
-    return m_frames.size();
+    return _frames.size();
 }
 
 void AnimationSequence::setSpeed(double speed)
@@ -83,7 +83,7 @@ std::string& AnimationSequence::getEvent()
 
 void AnimationSequence::reset()
 {
-    m_currentFrame = m_frames.at(0);
+    _currentFrame = _frames.at(0);
     m_currentID = 0;
     m_frameRepeats = 1;
 }

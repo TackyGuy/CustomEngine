@@ -18,7 +18,7 @@ namespace Core
             }
 
             ~RendererComponent(){}
-            RendererComponent(BroadcasterInterface *broadcaster) : BaseComponent(broadcaster){};
+            RendererComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster){};
 
             virtual void render(SDL_Renderer *renderer, const Vector2& pos, const Vector2& size){};         
     };

@@ -39,9 +39,9 @@ namespace Core
              */
             virtual void init()
             {
-                for (Actor *actor : ActorManager::actors)
+                for (auto actor : ActorManager::actors)
                 {
-                    actor-> start(*this);
+                    actor->start(*this);
                 }
             }
             /**
@@ -52,7 +52,7 @@ namespace Core
             virtual void update(double dt)
             {
                 m_elapsedTime += dt;
-                for (Actor *actor : ActorManager::actors)
+                for (auto actor : ActorManager::actors)
                 {
                     actor->update(dt, *this);
                 }

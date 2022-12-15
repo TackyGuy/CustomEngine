@@ -10,13 +10,13 @@ namespace Demo1
     class Card: public Button
     {
         private:
-            Sprite *_backSprite = nullptr;
-            Sprite *_hoverSprite = nullptr;
-            Sprite *_faceSprite = nullptr;
+            std::shared_ptr<Sprite> _backSprite = nullptr;
+            std::shared_ptr<Sprite> _hoverSprite = nullptr;
+            std::shared_ptr<Sprite> _faceSprite = nullptr;
 
-            AudioAsset *_sfx = nullptr;
-            AudioAsset *_flipSfx = nullptr;
-            AudioAsset *_selectSfx = nullptr;
+            std::shared_ptr<AudioAsset> _sfx = nullptr;
+            std::shared_ptr<AudioAsset> _flipSfx = nullptr;
+            std::shared_ptr<AudioAsset> _selectSfx = nullptr;
 
             bool m_flipped = false;
             bool m_isBomb = false;
@@ -32,14 +32,14 @@ namespace Demo1
              */
             Card(const Vector2& pos, const Vector2& scale, const int id): Button(pos, scale, id)
             {
-                UIManager::s_uiElements.emplace_back(this);
+                
             }
 
             void start(Stage& stage) override
             {
-                if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(this, _backSprite));
+                if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, _backSprite));
                 
-                this->addComponent<ColliderComponent>(ColliderComponent(this, this->getComponent<TransformComponent>(), "card"));
+                this->addComponent<ColliderComponent>(ColliderComponent(*this, *this->getComponent<TransformComponent>(), "card"));
                 _flipSfx = Loader::getAsset<AudioAsset>("sfxClick");
                 _selectSfx = Loader::getAsset<AudioAsset>("sfxSelect");
 
@@ -49,7 +49,7 @@ namespace Demo1
                 Actor::start(stage);
             }
 
-            void setCard(Sprite *faceSprite, Sprite *backSprite, Sprite *hoverSprite, AudioAsset *sfx, int val)
+            void setCard(std::shared_ptr<Sprite> faceSprite, std::shared_ptr<Sprite> backSprite, std::shared_ptr<Sprite> hoverSprite, std::shared_ptr<AudioAsset> sfx, int val)
             {
                 _faceSprite = faceSprite;
                 _backSprite = backSprite;
@@ -59,6 +59,19 @@ namespace Demo1
 
                 value = val;
                 m_isBomb = (val == 4);
+            }
+
+            void reveal()
+            {
+                if (m_flipped) return;
+                
+                m_flipped = true;
+                _spriteRenderer->setSprite(_faceSprite);
+            }
+
+            uint16_t getValue()
+            {
+                return value;
             }
 
             void update(double dt, Stage& stage) override
@@ -74,9 +87,8 @@ namespace Demo1
             {
                 if (!m_flipped)
                 {
-                    m_flipped = true;
-                    _spriteRenderer->setSprite(_faceSprite);
-                    _stage->getAudioMixer()->playSound(_sfx);
+                    reveal();
+                    _stage->getAudioMixer()->playSound(_sfx.get());
                     if (m_isBomb) _stage->sendMessage("gameOver");
                     else
                     {
@@ -93,7 +105,7 @@ namespace Demo1
                 if (!m_flipped) 
                 {
                     _spriteRenderer->setSprite(_hoverSprite);
-                    _stage->getAudioMixer()->playSound(_selectSfx);
+                    _stage->getAudioMixer()->playSound(_selectSfx.get());
                 }
             }
             void onHover() override {}

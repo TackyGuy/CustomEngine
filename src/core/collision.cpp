@@ -1,13 +1,13 @@
 #include "collision.h"
 using namespace Core;
 
-bool Collision::AABB(BoundingBox *boxA, BoundingBox *boxB)
+bool Collision::AABB(const BoundingBox& boxA, const BoundingBox& boxB)
 {
-    Vector2 minA = boxA->getMin();
-    Vector2 maxA = boxA->getMax();
+    Vector2 minA = boxA.getMin();
+    Vector2 maxA = boxA.getMax();
 
-    Vector2 minB = boxB->getMin();
-    Vector2 maxB = boxB->getMax();
+    Vector2 minB = boxB.getMin();
+    Vector2 maxB = boxB.getMax();
 
     if 
     (
@@ -27,7 +27,7 @@ void Collision::createNodeTree()
 {
     // _worldAABB.getSize().print();
     // std::cout << "\nCreating Node tree..." << std::endl;
-    std::map<int, ColliderComponent*>::iterator it;
+    std::map<int, std::shared_ptr<ColliderComponent>>::iterator it;
     if (!_colliders.empty())
     {
         for (it = _colliders.begin(); it != _colliders.end(); it++)
@@ -41,7 +41,7 @@ void Collision::createNodeTree()
     bspDone = true;
 }
 
-void Collision::createNode(Node& root, ColliderComponent *collider)
+void Collision::createNode(Node& root, std::shared_ptr<ColliderComponent> collider)
 {
     if (collider == nullptr) 
     {
@@ -71,7 +71,7 @@ void Collision::createNode(Node& root, ColliderComponent *collider)
     }
 }
 
-Node *Collision::getDeepestIntersectingNode(Node *root, ColliderComponent *collider)
+Node *Collision::getDeepestIntersectingNode(Node *root, std::shared_ptr<ColliderComponent> collider)
 {
     Node *connector = nullptr;
 
@@ -112,42 +112,40 @@ Node *Collision::getDeepestIntersectingNode(Node *root, ColliderComponent *colli
     return connector;
 }
 
-void Collision::splitBranch(Node& branch, ColliderComponent *collider)
+void Collision::splitBranch(Node& branch, std::shared_ptr<ColliderComponent> collider)
 {
     // std::cout << "...splitting branch..." << std::endl;
 
     bool isHorizontal = false;
 
-    BoundingBox *leftBox = nullptr;
-    BoundingBox *rightBox = nullptr;
     Vector2 center, extents;
 
-    if (branch.AABB == nullptr) return;
-
     // We check which axis is the greatest and we divide by two
-    if (branch.AABB->getSize().getX() >= branch.AABB->getSize().getY())
+    if (branch.AABB.getSize().getX() >= branch.AABB.getSize().getY())
     {
-        center = Vector2(branch.AABB->getCenter().getX() * 0.5f, branch.AABB->getCenter().getY());
-        extents = Vector2(branch.AABB->getExtents().getX() * 0.5f, branch.AABB->getExtents().getY());
+        center = Vector2(branch.AABB.getCenter().getX() * 0.5f, branch.AABB.getCenter().getY());
+        extents = Vector2(branch.AABB.getExtents().getX() * 0.5f, branch.AABB.getExtents().getY());
 
         isHorizontal = true;
     }
     else
     {
-        center = Vector2(branch.AABB->getCenter().getX(), branch.AABB->getCenter().getY() * 0.5f);
-        extents = Vector2(branch.AABB->getExtents().getX(), branch.AABB->getExtents().getY() * 0.5f);
+        center = Vector2(branch.AABB.getCenter().getX(), branch.AABB.getCenter().getY() * 0.5f);
+        extents = Vector2(branch.AABB.getExtents().getX(), branch.AABB.getExtents().getY() * 0.5f);
     }
 
+    BoundingBox leftBox;
+    BoundingBox rightBox;
     // We create a new bounding box with the new values
-    leftBox = new BoundingBox(center, extents);
+    leftBox = BoundingBox(center, extents);
     Node *leftNode = new Node(&branch, leftBox);
 
     // We create another bounding box on the opposite side and check again
     Vector2 flippedCenter = (isHorizontal) ? 
-        Vector2(center.getX() + leftNode->AABB->getSize().getX(), center.getY()) : 
-        Vector2(center.getX(), center.getY() + leftNode->AABB->getSize().getY());
+        Vector2(center.getX() + leftNode->AABB.getSize().getX(), center.getY()) : 
+        Vector2(center.getX(), center.getY() + leftNode->AABB.getSize().getY());
 
-    rightBox = new BoundingBox(flippedCenter, extents);
+    rightBox = BoundingBox(flippedCenter, extents);
     Node *rightNode = new Node(&branch, rightBox);
 
 
@@ -184,7 +182,6 @@ void Collision::splitBranch(Node& branch, ColliderComponent *collider)
         splitBranch(*leftNode, collider);
 
         delete rightNode;
-        delete rightBox;
     }
     else if (intersectsRightBox)
     {
@@ -193,11 +190,10 @@ void Collision::splitBranch(Node& branch, ColliderComponent *collider)
         splitBranch(*rightNode, collider);
         
         delete leftNode;
-        delete leftBox;
     }
 }
 
-std::vector<Node*> Collision::getIntersectingNodes(Node *node, ColliderComponent *collider)
+std::vector<Node*> Collision::getIntersectingNodes(Node *node, std::shared_ptr<ColliderComponent> collider)
 {
     std::vector<Node*> res;
 
@@ -218,9 +214,9 @@ std::vector<Node*> Collision::getIntersectingNodes(Node *node, ColliderComponent
     return res;
 }
 
-std::vector<ColliderComponent*> Collision::getColliders(ColliderComponent *col)
+std::vector<std::shared_ptr<ColliderComponent>> Collision::getColliders(std::shared_ptr<ColliderComponent> col)
 {
-    std::vector<ColliderComponent*> res;
+    std::vector<std::shared_ptr<ColliderComponent>> res;
 
     updateNodeTree();
 
@@ -233,16 +229,16 @@ std::vector<ColliderComponent*> Collision::getColliders(ColliderComponent *col)
 
     return res;
 }
-ColliderComponent *Collision::getClosestCollider(ColliderComponent *collider)
+std::shared_ptr<ColliderComponent> Collision::getClosestCollider(std::shared_ptr<ColliderComponent> collider)
 {
-    ColliderComponent *closestCollider = nullptr;
-    Vector2 center = collider->getAABB()->getCenter();
+    std::shared_ptr<ColliderComponent> closestCollider = nullptr;
+    Vector2 center = collider->getAABB().getCenter();
 
     std::vector<Node*>::iterator it;
     auto intersectingNodes = getIntersectingNodes(&_rootNode, collider);
     for (it = intersectingNodes.begin(); it != intersectingNodes.end(); it++)
     {
-        if (closestCollider == nullptr || center.distance(closestCollider->getAABB()->getCenter()) > center.distance((*it)->AABB->getCenter()))
+        if (closestCollider == nullptr || center.distance(closestCollider->getAABB().getCenter()) > center.distance((*it)->AABB.getCenter()))
         {
             closestCollider = (*it)->Collider;
         }
@@ -320,7 +316,7 @@ void Collision::handleDirtyNode(Node *dirtyNode)
     }
 }
 
-void Collision::addCollider(int id, ColliderComponent *col)
+void Collision::addCollider(int id, std::shared_ptr<ColliderComponent> col)
 {
     std::cout << "adding new collider" << std::endl;
     _colliders.emplace(id, col);

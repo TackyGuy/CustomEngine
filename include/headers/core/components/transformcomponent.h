@@ -26,19 +26,19 @@ namespace Core
             }
 
             ~TransformComponent(){}
-            TransformComponent(BroadcasterInterface *broadcaster) :BaseComponent(broadcaster)
+            TransformComponent(const BroadcasterInterface& p_broadcaster) :BaseComponent(p_broadcaster)
             {
                 _position = Vector2(0, 0);
                 _scale = Vector2(0, 0);
                 _center = Vector2(0, 0);
             }
-            TransformComponent(BroadcasterInterface *broadcaster, const Vector2& pos, const Vector2& scale)
-            : BaseComponent(broadcaster), _position(pos), _scale(scale)
+            TransformComponent(const BroadcasterInterface& p_broadcaster, const Vector2& pos, const Vector2& scale)
+            : BaseComponent(p_broadcaster), _position(pos), _scale(scale)
             {
                 calculateCenter();
             }
-            TransformComponent(BroadcasterInterface *broadcaster, const TransformComponent& transform)
-            : BaseComponent(broadcaster), _position(transform._position), _scale(transform._scale), _center(transform._center)
+            TransformComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& transform)
+            : BaseComponent(p_broadcaster), _position(transform._position), _scale(transform._scale), _center(transform._center)
             {}
 
             void translate(const Vector2& pos);

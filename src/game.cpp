@@ -9,7 +9,7 @@ Game::Game()
 
 Game::~Game()
 {
-    std::cout << "destroying game and cleaning up...s" << std::endl;
+    std::cout << "destroying game and cleaning up..." << std::endl;
     
     m_window->cleanUp();
     TTF_Quit();
@@ -108,23 +108,28 @@ void Game::render()
 {
     m_window->clear();
 
-    for (Actor *actor : ActorManager::actors)
+    for (std::weak_ptr<Actor> weakPtr : ActorManager::actors)
     {
-        actor->render(m_window.get());
+        auto actor = weakPtr.lock();
+        if (actor) actor->render(m_window.get());
+        
     }
     m_window->display();
 }
 
 void Game::handleCollisions()
 {
-    for (Actor *actor : ActorManager::actors)
+    for (std::weak_ptr<Actor> weakPtr : ActorManager::actors)
     {
-        RigidbodyComponent *rb = actor->getComponent<RigidbodyComponent>();
-        if (rb == nullptr) continue;
+        auto actor = weakPtr.lock();
+        if (!actor) return;
+
+        auto rb = actor->getComponent<RigidbodyComponent>();
+        if (!rb) continue;
 
         if (!Collision::bspDone)
         {
-            ColliderComponent *col = rb->getCollider();
+            auto col = rb->getCollider();
             if (col == nullptr) continue;
 
             if (!Collision::findCollider(actor->getID())) Collision::addCollider(actor->getID(), col);
@@ -133,7 +138,7 @@ void Game::handleCollisions()
         {
             if (rb->bodyType == RigidbodyComponent::Body::DYNAMIC)
             {
-                if (rb->getCollider()->getAABB() == nullptr) continue;
+                if (rb->getCollider()) continue;
                 
                 auto cols = Collision::getColliders(rb->getCollider());
                 if (cols.size())
@@ -145,6 +150,8 @@ void Game::handleCollisions()
                 }
             }
         }
+
+        
     }
 
     if (!Collision::bspDone) Collision::createNodeTree();

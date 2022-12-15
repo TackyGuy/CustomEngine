@@ -3,7 +3,7 @@ using namespace Core;
 
 const size_t ColliderComponent::Type = std::hash<std::string>{}("Collider");
 
-BoundingBox *ColliderComponent::getAABB()
+BoundingBox& ColliderComponent::getAABB()
 {
     return m_aabb;
 }

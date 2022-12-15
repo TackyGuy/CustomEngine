@@ -6,17 +6,17 @@ const size_t SpriteRendererComponent::Type = std::hash<std::string>{}("Renderer"
 
 SDL_Rect SpriteRendererComponent::getRect()
 {
-    if (m_sprite == nullptr) return m_rect;
-    return m_sprite->getRect();
+    if (_sprite == nullptr) return m_rect;
+    return _sprite->getRect();
 }
 
-void SpriteRendererComponent::setSprite(Sprite *sprite)
+void SpriteRendererComponent::setSprite(std::shared_ptr<Sprite> sprite)
 {
-    m_sprite = sprite;
+    _sprite = sprite;
 }
 Sprite& SpriteRendererComponent::getSprite()
 {
-    return *m_sprite;
+    return *_sprite;
 }
 
 void SpriteRendererComponent::flip(bool val)

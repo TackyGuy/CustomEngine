@@ -31,20 +31,24 @@ namespace Sandbox
             void start(Stage& stage) override
             {
                 std::shared_ptr<Sprite> sprite = Loader::getAsset<SpritesheetAsset>("hero")->getSpriteAt(2);
-                this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(this, sprite.get()));
-                this->addComponent<AnimatorComponent>(AnimatorComponent(this, this->getComponent<SpriteRendererComponent>()));
-                this->addComponent<ColliderComponent>(ColliderComponent(this, this->getComponent<TransformComponent>(), Vector2(5, 5), "player"));
-                this->addComponent<RigidbodyComponent>(RigidbodyComponent(
-                    this, this->getComponent<TransformComponent>(), this->getComponent<ColliderComponent>(), RigidbodyComponent::Body::DYNAMIC));
-                this->addComponent<HeroInputComponent>(HeroInputComponent(this, &currentState, this->getComponent<RigidbodyComponent>(), 
-                    this->getComponent<AnimatorComponent>(), this->getComponent<ColliderComponent>()));
+                this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, sprite));
+
+                this->addComponent<AnimatorComponent>(AnimatorComponent(*this, *this->getComponent<SpriteRendererComponent>()));
+
+                this->addComponent<ColliderComponent>(ColliderComponent(*this, *this->getComponent<TransformComponent>(), Vector2(5, 5), "player"));
+
+                this->addComponent<RigidbodyComponent>(RigidbodyComponent(*this, 
+                    this->getComponent<TransformComponent>(), this->getComponent<ColliderComponent>(), RigidbodyComponent::Body::DYNAMIC));
+
+                this->addComponent<HeroInputComponent>(HeroInputComponent(*this, currentState, this->getComponent<RigidbodyComponent>(), 
+                    this->getComponent<AnimatorComponent>()));
 
                 // TODO Add offset to spritesheet before slicing it
                 auto frames = Loader::getAsset<SpritesheetAsset>("hero")->getAllSprites();
 
                 if (frames.size() > 0)
                 {
-                    AnimatorComponent *animator = this->getComponent<AnimatorComponent>();
+                    auto animator = this->getComponent<AnimatorComponent>();
 
                     AnimationSequence idle = AnimationSequence("idle");
                     idle.addFrameToSequence(frames.at(0), 8);

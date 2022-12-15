@@ -7,7 +7,6 @@
 
 #include "math.h"
 #include "renderercomponent.h"
-#include "userinterface.h"
 #include "fontasset.h"
 
 namespace Core
@@ -35,7 +34,7 @@ namespace Core
             {
                 SDL_DestroyTexture(_texture);
             }
-            TextComponent(BroadcasterInterface *broadcaster, const char* str, SDL_Color colour, FontAsset *font): RendererComponent(broadcaster), m_text(str), m_colour(colour), _font(font)
+            TextComponent(const BroadcasterInterface& p_broadcaster, const char* str, SDL_Color colour, FontAsset *font): RendererComponent(p_broadcaster), m_text(str), m_colour(colour), _font(font)
             {
                 createSurface();
             }

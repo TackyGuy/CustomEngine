@@ -12,21 +12,17 @@ namespace Core
         private:
             SDL_Rect m_rect;
 
-            SDL_Texture *p_tex;
+            SDL_Texture *_tex = nullptr;
             bool m_keepRatio;
         public:
-            ~Sprite(){}
+            ~Sprite()
+            {}
             
-            Sprite(const Sprite& sprite)
-            {
-                this->m_rect = sprite.m_rect;
-            }
-            Sprite(SDL_Texture *texture, SDL_Rect rect, bool keepRatio = true)
-            {
-                p_tex = texture;
-                m_rect = rect;
-                m_keepRatio = keepRatio;
-            }
+            Sprite(const Sprite& sprite) : m_rect(sprite.m_rect)
+            {}
+
+            Sprite(SDL_Texture *texture, SDL_Rect rect, bool keepRatio = true) : _tex(texture), m_rect(rect), m_keepRatio(keepRatio)
+            {}
             
             SDL_Rect getRect();
             void setRect(int x, int y, int w, int h);

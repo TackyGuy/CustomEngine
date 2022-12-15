@@ -13,13 +13,19 @@ namespace Core
 {
     class Button : public Actor, public UserInterface
     {
+        private:
+            int16_t uiID;
         protected:
-            ColliderComponent *_collider;
-            SpriteRendererComponent *_spriteRenderer;
-            TextComponent *_textRenderer;
+            std::shared_ptr<ColliderComponent> _collider = nullptr;
+            std::shared_ptr<SpriteRendererComponent> _spriteRenderer = nullptr;
+            std::shared_ptr<TextComponent> _textRenderer = nullptr;
         
         public:
-            ~Button(){}
+            int test = 0;
+            ~Button()
+            {
+                UIManager::removeElement(uiID);
+            }
             /**
              * @brief Construct a new Button object
              * 
@@ -29,7 +35,7 @@ namespace Core
              */
             Button(const Vector2& pos, const Vector2& scale, const int id): Actor(pos, scale, id)
             {
-                UIManager::s_uiElements.emplace_back(this);
+                uiID = UIManager::addElement(this);
             }
 
             /**
@@ -39,7 +45,7 @@ namespace Core
              * @param srComponent The SpriteRendererComponent of the button if applicable
              * @param txtRenderer The TextComponent of the button if applicable
              */
-            virtual void setupButton(ColliderComponent *collider, SpriteRendererComponent *srComponent, TextComponent *txtRenderer)
+            virtual void setupButton(std::shared_ptr<ColliderComponent> collider, std::shared_ptr<SpriteRendererComponent> srComponent, std::shared_ptr<TextComponent> txtRenderer)
             {
                 if (collider != nullptr) _collider = collider;
 
@@ -92,7 +98,7 @@ namespace Core
              * 
              * @return ColliderComponent* 
              */
-            virtual ColliderComponent *getCollider() override
+            virtual std::shared_ptr<ColliderComponent>  getCollider() override
             {
                 return _collider;
             }

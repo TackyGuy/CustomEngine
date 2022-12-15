@@ -35,6 +35,7 @@ namespace Core
 
                 m_size = extents * 2;
             }
+            BoundingBox(){}
 
             /**
              * @brief Set the center of the BoundingBox to a new Vector2 and recalculates the minimums and maximums vectors
@@ -47,7 +48,7 @@ namespace Core
              * 
              * @return Vector2& A reference to the Vector2 representing the center
              */
-            Vector2& getCenter();
+            const Vector2& getCenter() const;
 
             /**
              * @brief Expands the BoundingBox in all directions equally.
@@ -64,29 +65,35 @@ namespace Core
             void expand(float x, float y);
             void expand(Vector2 vec2);
             /**
+             * @brief Set the Extents(wingspan) of the BoundingBox as a Vector2
+             * 
+             * @param vec2 
+             */
+            void setExtents(Vector2 vec2);
+            /**
              * @brief Get the extents(wingspan) of the BoundingBox as a Vector2
              * 
              * @return Vector2& A reference to the Vector2 representing its extents
              */
-            Vector2& getExtents();
+            const Vector2& getExtents() const;
             /**
              * @brief Get the size of the BoundingBox as a Vector2
              * 
              * @return Vector2& A reference to the Vector2 representing its size
              */
-            Vector2& getSize();
+            const Vector2& getSize() const;
 
             /**
              * @brief Get the Min object
              * 
              * @return Vector2& 
              */
-            Vector2& getMin();
+            const Vector2& getMin() const;
             /**
              * @brief Get the Max object
              * 
              * @return Vector2& 
              */
-            Vector2& getMax();
+            const Vector2& getMax() const;
     };
 }

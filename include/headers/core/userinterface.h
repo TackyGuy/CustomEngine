@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <map>
 
 #include "math.h"
 #include "collision.h"
@@ -38,7 +38,7 @@ namespace Core
              * 
              * @return ColliderComponent* a pointer to the ColliderComponent
              */
-            virtual ColliderComponent *getCollider() = 0;
+            virtual std::shared_ptr<ColliderComponent> getCollider() = 0;
     };
     class UIManager
     {
@@ -46,19 +46,28 @@ namespace Core
             ~UIManager(){};
             UIManager(){};
         public:
-            inline static std::vector<UserInterface*> s_uiElements;
+            inline static std::map<uint16_t, std::shared_ptr<UserInterface>> s_uiElements;
 
-            inline static UserInterface *checkOverlapWithUI(BoundingBox *mouseBox)
+            inline static int16_t addElement(UserInterface *uiElement)
             {
-                if (mouseBox == nullptr) return nullptr;
-                // std::vector<Actor*> contacts;
+                int16_t index = s_uiElements.size();
+                s_uiElements.emplace(index, uiElement);
 
-                for (auto element : s_uiElements)
+                return index;
+            }
+            inline static void removeElement(uint16_t index)
+            {
+                s_uiElements.erase(index);
+            }
+
+            inline static std::shared_ptr<UserInterface> checkOverlapWithUI(const BoundingBox& mouseBox)
+            {
+                for (auto pair : s_uiElements)
                 {
-                    ColliderComponent *col = element->getCollider();
+                    auto element = pair.second;
 
-                    if (col == nullptr) continue;
-                    if (col->getAABB() == nullptr) continue;
+                    auto col = element->getCollider();
+                    if (!col) continue;
 
                     if (Collision::AABB(mouseBox, col->getAABB())) 
                     {

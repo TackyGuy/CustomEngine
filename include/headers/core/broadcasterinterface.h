@@ -7,6 +7,6 @@ namespace Core
     class BroadcasterInterface
     {
         public:
-            virtual void broadcastMessage(const std::string& msg, const size_t sender) = 0;
+            virtual void broadcastMessage(const std::string& msg, const size_t sender) const = 0;
     };
 }

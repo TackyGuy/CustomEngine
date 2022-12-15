@@ -12,8 +12,8 @@ namespace Core
     class RigidbodyComponent : public BaseComponent
     {
         private:
-            TransformComponent *_transform = nullptr;
-            ColliderComponent *_collider = nullptr;
+            std::shared_ptr<TransformComponent> _transform = nullptr;
+            std::shared_ptr<ColliderComponent> _collider = nullptr;
             Vector2 m_velocity = Vector2(0, 0);
 
             void resolveCollision();
@@ -31,8 +31,8 @@ namespace Core
             }
 
             ~RigidbodyComponent(){}
-            RigidbodyComponent(BroadcasterInterface *broadcaster, TransformComponent *transform, ColliderComponent *collider, Body type) : BaseComponent(broadcaster), 
-            _transform(transform), _collider(collider), bodyType(type)
+            RigidbodyComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> transform, std::shared_ptr<ColliderComponent> collider, Body type) : 
+            BaseComponent(p_broadcaster), _transform(transform), _collider(collider), bodyType(type)
             {}
 
             virtual void update(double dt, Stage& stage) override
@@ -45,7 +45,7 @@ namespace Core
                 }
             }
 
-            virtual void onCollision(ColliderComponent *other)
+            virtual void onCollision(std::weak_ptr<ColliderComponent> other)
             {
                 //
             }
@@ -53,6 +53,6 @@ namespace Core
             void setVelocity(Vector2& vec2);
             const Vector2& getVelocity() const;
 
-            ColliderComponent *getCollider();
+            std::shared_ptr<ColliderComponent> getCollider();
     };
 }

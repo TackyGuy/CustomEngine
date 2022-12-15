@@ -7,9 +7,9 @@ void RigidbodyComponent::resolveCollision()
 {
     Vector2 previousPosition = _transform->getPosition();
     Vector2 currentPosition = previousPosition + m_velocity;
-    _collider->getAABB()->setCenter(currentPosition);
+    _collider->getAABB().setCenter(currentPosition);
 
-    ColliderComponent *other = Collision::getClosestCollider(_collider);
+    auto other = Collision::getClosestCollider(_collider);
     Vector2 direction = m_velocity;
     direction.normalize();
 
@@ -17,7 +17,7 @@ void RigidbodyComponent::resolveCollision()
     {
         // std::cout << "Closest collider to " << _collider->getTag() << " is " << other->getTag() << std::endl;
         currentPosition.substract(direction);
-        _collider->getAABB()->setCenter(currentPosition);
+        _collider->getAABB().setCenter(currentPosition);
 
         other = Collision::getClosestCollider(_collider);
     }
@@ -36,7 +36,7 @@ const Vector2& RigidbodyComponent::getVelocity() const
     return m_velocity;
 }
 
-ColliderComponent *RigidbodyComponent::getCollider()
+std::shared_ptr<ColliderComponent> RigidbodyComponent::getCollider()
 {
     return _collider;
 }

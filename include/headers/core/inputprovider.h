@@ -18,7 +18,7 @@ namespace Core
             Uint32 m_mouseState;
             Vector2 m_mousePos;
 
-            UserInterface  *_currentHovered = nullptr;
+            std::shared_ptr<UserInterface> _currentHovered = nullptr;
             
         public:
             ~InputProvider(){}

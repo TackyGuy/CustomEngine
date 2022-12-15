@@ -10,7 +10,7 @@ namespace Core
 
         public:
             // A vector holding pointers to all the valid Actors.
-            static std::vector<Actor*> actors;
+            inline static std::vector<std::shared_ptr<Actor>> actors;
 
             /**
              * @brief Create an Actor object of type T at the specified position and
@@ -22,9 +22,9 @@ namespace Core
              * @return T* A pointer of type T pointing to the new Actor object.
              */
             template <class T>
-            static T* createActor(const Vector2& pos, const Vector2& scale)
+            static std::shared_ptr<T> createActor(const Vector2& pos, const Vector2& scale)
             {
-                T *newActor = new T(pos, scale, actors.size());
+                std::shared_ptr<T> newActor(new T(pos, scale, actors.size()));
 
                 actors.push_back(newActor);
                 // std::cout << "Actor created" << std::endl;
@@ -36,7 +36,7 @@ namespace Core
              * 
              * @param a The Actor object to register
              */
-            static void registerActor(Actor *a);
+            static void registerActor(std::shared_ptr<Actor> a);
             /**
              * @brief Unregister and delete the specified Actor object.
              * 
