@@ -88,7 +88,7 @@ namespace Demo1
                 if (!m_flipped)
                 {
                     reveal();
-                    _stage->getAudioMixer()->playSound(_sfx.get());
+                    _stage->getAudioMixer()->playSound(_sfx);
                     if (m_isBomb) _stage->sendMessage("gameOver");
                     else
                     {
@@ -105,7 +105,7 @@ namespace Demo1
                 if (!m_flipped) 
                 {
                     _spriteRenderer->setSprite(_hoverSprite);
-                    _stage->getAudioMixer()->playSound(_selectSfx.get());
+                    _stage->getAudioMixer()->playSound(_selectSfx);
                 }
             }
             void onHover() override {}

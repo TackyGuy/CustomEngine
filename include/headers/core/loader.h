@@ -18,48 +18,50 @@ namespace Core
     class Loader
     {
         private:
-            static Loader instance;
+            static Loader s_instance;
             std::map<std::string, std::shared_ptr<Asset>> _loadedAssets;
             bool m_isInitialized = false;
             RenderWindow m_window;
 
             Loader(){};
 
-            bool loadAssetInternal(const std::string& key, Asset *p_assetToLoad)
+            bool loadAssetInternal(const std::string& key, Asset *assetToLoad)
             {
                 if (!m_isInitialized) return false;
-                if (p_assetToLoad == nullptr) return false;
+                if (!assetToLoad) return false;
+                if (_loadedAssets.find(key) != _loadedAssets.end()) return false;
                 
-                if (p_assetToLoad->getType() == Asset::SpritesheetType)
+                if (assetToLoad->getType() == Asset::SpritesheetType)
                 {
-                    SpritesheetAsset *sheet = dynamic_cast<SpritesheetAsset*>(p_assetToLoad);
+                    auto sheet = dynamic_cast<SpritesheetAsset*>(assetToLoad);
                     sheet->setTexture(m_window.loadTexture(sheet->getPath()));
 
-                    p_assetToLoad = sheet;
+                    assetToLoad = sheet;
                 }
-                else if (p_assetToLoad->getType() == Asset::FontAssetType)
+                else if (assetToLoad->getType() == Asset::FontAssetType)
                 {
-                    FontAsset *font = dynamic_cast<FontAsset*>(p_assetToLoad);
+                    auto font = dynamic_cast<FontAsset*>(assetToLoad);
                     font->setFont(TTF_OpenFont(font->getPath(), font->getSize()));
 
-                    p_assetToLoad = font;
+                    assetToLoad = font;
                 }
-                else if (p_assetToLoad->getType() == Asset::AudioAssetType)
+                else if (assetToLoad->getType() == Asset::AudioAssetType)
                 {
-                    AudioAsset *audio = dynamic_cast<AudioAsset*>(p_assetToLoad);
+                    auto audio = dynamic_cast<AudioAsset*>(assetToLoad);
                     if (audio->isMusic()) audio->setAudio(nullptr, Mix_LoadMUS(audio->getPath()));
                     else audio->setAudio(Mix_LoadWAV(audio->getPath()), nullptr);
                     
-
-                    p_assetToLoad = audio;
+                    assetToLoad = audio;
                 }
 
-                p_assetToLoad->setLoaded(true);
-                std::cout << p_assetToLoad->getPath() << ": " << (bool)p_assetToLoad->isLoaded() << std::endl;
+                if (!assetToLoad) return false;
 
-                _loadedAssets.emplace(key, p_assetToLoad);
+                assetToLoad->setLoaded(true);
+                std::cout << assetToLoad->getPath() << ": " << (bool)assetToLoad->isLoaded() << std::endl;
 
-                return p_assetToLoad->isLoaded();
+                _loadedAssets.emplace(key, assetToLoad);
+
+                return assetToLoad->isLoaded();
             }
 
             template <class T> 
@@ -86,27 +88,47 @@ namespace Core
 
             void operator=(const Loader&) = delete;
 
-            static Loader& get()
+            static Loader& instance()
             {
-                static Loader instance;
-                return instance;
+                static Loader s_instance;
+                return s_instance;
             }
 
+            /**
+             * @brief Initializes the Asset Loader
+             * 
+             * @param window The RenderWindow object
+             */
             static void init(RenderWindow& window)
             {
-                get().m_window = window;
-                get().m_isInitialized = true;
+                instance().m_window = window;
+                instance().m_isInitialized = true;
             }
 
-            static bool loadAsset(const std::string& key, Asset *p_assetToLoad)
+            /**
+             * @brief Loads and cache a new asset in the map of loaded assets
+             * 
+             * @param key The key to assign to the newly created Asset
+             * @param assetToLoad A pointer to the Asset
+             * @return true if the asset was loaded successfully
+             * @return false if the asset could not be loaded
+             */
+            static bool loadAsset(const std::string& key, Asset *assetToLoad)
             {
-                return get().loadAssetInternal(key, p_assetToLoad);
+                return instance().loadAssetInternal(key, assetToLoad);
             }
 
+            /**
+             * @brief Get the Asset of type <T> if it exists in the map of loaded assets
+             * 
+             * @tparam T The type of the Asset
+             * @param key The key of the Asset
+             * @return std::shared_ptr<T> shared_ptr to the Asset
+             */
             template <class T> 
             static std::shared_ptr<T> getAsset(const std::string& key)
             {
-                return get().getAssetInternal<T>(key);
+                return instance().getAssetInternal<T>(key);
             }
     };
 }

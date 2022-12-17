@@ -6,7 +6,7 @@ const size_t TextComponent::Type = std::hash<std::string>{}("Text");
 void TextComponent::createSurface()
 {
     SDL_FreeSurface(_surface);
-    _surface = TTF_RenderText_Solid(_font->getFont(), m_text.c_str(), m_colour);
+    _surface = TTF_RenderUTF8_Solid(_fontAsset->getFont(), m_text.c_str(), m_colour);
     m_dirty = true;
 }
 
@@ -32,9 +32,9 @@ SDL_Color& TextComponent::getColor()
     return m_colour;
 }
 
-void TextComponent::setFont(FontAsset *font)
+void TextComponent::setFont(std::shared_ptr<FontAsset> font)
 {
-    _font = font;
+    _fontAsset = font;
     createSurface();
 }
 SDL_Surface *TextComponent::getSurface()
@@ -42,8 +42,10 @@ SDL_Surface *TextComponent::getSurface()
     return _surface;
 }
 
-void TextComponent::setTexture(SDL_Texture * texture)
+void TextComponent::setTexture(SDL_Texture *texture)
 {
+    if (!_texture) return;
+
     SDL_DestroyTexture(_texture);
     _texture = texture;
     // We set the dirty flag to false

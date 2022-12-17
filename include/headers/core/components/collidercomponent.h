@@ -28,16 +28,28 @@ namespace Core
             }
 
             ~ColliderComponent(){};
-            // Pointer to a transform component
-            // SDL_Rect
-            // Tag of the collider
+            /**
+             * @brief Construct a new Collider Component object and its BoundingBox.
+             * 
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param p_transform The TransformComponent to reference
+             * @param vec2 The extents (wingspan) of the BoundingBox of this collider
+             * @param str The tag of this collider
+             * @param isTrigger Is this collider trigger only?
+             */
             ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : 
-            BaseComponent(broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), vec2)
+            BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), vec2)
             {}
-            // Pointer to a transform component
-            // Tag of the collider
+            /**
+             * @brief Construct a new Collider Component object and its BoundingBox.
+             * 
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param p_transform The TransformComponent to reference
+             * @param str The tag of this collider
+             * @param isTrigger Is this collider trigger only?
+             */
             ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, const std::string& str = "", bool isTrigger = false) : 
-            BaseComponent(broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger)
+            BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger)
             {
                 Vector2 extents(0, 0);
                 extents.add(p_transform.getScale());
@@ -45,9 +57,30 @@ namespace Core
                 m_aabb = BoundingBox(p_transform.getPositionCentered(), extents);
             }
 
+            /**
+             * @brief Returns a reference to the BoundingBox of this collider.
+             * 
+             * @return BoundingBox& The BoundingBox
+             */
             BoundingBox& getAABB();
+            /**
+             * @brief Check if this collider is dirty.
+             * 
+             * @return true if dirty
+             * @return false if not dirty
+             */
             bool isDirty() const;
+            /**
+             * @brief Set the state of the dirty flag of this collider.
+             * 
+             * @param val The new value m_dirtyFlag should have
+             */
             void setDirty(bool val);
+            /**
+             * @brief Return the tag of this collider.
+             * 
+             * @return const std::string& The tag
+             */
             const std::string& getTag() const;
     };
 }

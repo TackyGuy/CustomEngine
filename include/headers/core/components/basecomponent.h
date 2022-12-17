@@ -22,7 +22,7 @@ namespace Core
             static const size_t Type;
 
             /**
-             * @brief Construct a new Base Component object
+             * @brief Construct a new Base Component object.
              * 
              * @param broadcaster A reference to the actor that holds the component
              */
@@ -30,6 +30,12 @@ namespace Core
             {}
             virtual ~BaseComponent() = default;
 
+            /**
+             * @brief Updates the component.
+             * 
+             * @param dt DeltaTime as a double
+             * @param stage A reference to the current stage
+             */
             virtual void update(double dt, Stage& stage)
             {}
 

@@ -18,8 +18,20 @@ namespace Core
             }
 
             ~RendererComponent(){}
+            /**
+             * @brief Construct a new Renderer Component object.
+             * 
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             */
             RendererComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster){};
 
+            /**
+             * @brief Renders this component at the selected position and with the desired size
+             * 
+             * @param renderer SDL_Renderer
+             * @param pos Vector2
+             * @param size Vector2
+             */
             virtual void render(SDL_Renderer *renderer, const Vector2& pos, const Vector2& size){};         
     };
 }

@@ -1,17 +1,16 @@
 #pragma once
 
-#include "stage.h"
+#include <random>
 
+#include "stage.h"
 #include "hero.h"
 #include "button.h"
 #include "basecomponent.h"
-#include "nullcomponent.h"
 #include "transformcomponent.h"
 #include "spriterenderercomponent.h"
 #include "collidercomponent.h"
 #include "textcomponent.h"
 
-#include <random>
 
 using namespace Core;
 
@@ -35,7 +34,7 @@ namespace Sandbox
                 Loader::loadAsset("icons", new SpritesheetAsset("res/sprites/user_interface/icons.png", 16, 16));
                 Loader::loadAsset("voltorb", new SpritesheetAsset("res/sprites/placeholders/voltorb.png", 33, 33));
 
-                Loader::loadAsset("weiholmirRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 15));
+                Loader::loadAsset("weiholmirRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 16));
                 Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3", true));
             }
 
@@ -148,7 +147,7 @@ namespace Sandbox
 
                 _counter = ActorManager::createActor<Actor>(Vector2((center().getX() - 2) * tileSize, (minY - 1) * tileSize), Vector2(10, 10));
                 SDL_Color colorWhite = {255, 255, 255};
-                _counter->addComponent<TextComponent>(TextComponent(*_counter, "0", colorWhite, Loader::getAsset<FontAsset>("weiholmirRegular").get()));
+                _counter->addComponent<TextComponent>(TextComponent(*_counter, "0", colorWhite, Loader::getAsset<FontAsset>("weiholmirRegular")));
 
                 auto buttonTest = ActorManager::createActor<Button>(Vector2((center().getX() - 1) * tileSize, center().getY() * tileSize), Vector2(80, 80));
                 buttonTest->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*buttonTest, Loader::getAsset<SpritesheetAsset>("voltorb")->getSpriteAt(0)));
@@ -157,7 +156,7 @@ namespace Sandbox
 
                 setUI();
                 _audioMixer->setMusicVolume(3);
-                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music").get());
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music"));
 
                 Stage::init();
             }

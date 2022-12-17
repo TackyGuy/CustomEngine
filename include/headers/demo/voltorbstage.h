@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <random>
+#include "SDL.h"
 
 #include "stage.h"
 #include "card.h"
@@ -48,10 +49,11 @@ namespace Demo1
             void init() override
             {
                 std::cout << "Welcome to Voltorb Flip!" << std::endl;
+
                 createTable();
 
                 _audioMixer->setMusicVolume(2);
-                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain").get());
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain"));
                 _audioMixer->setSoundVolume(1);
 
                 m_currentScore = 1;
@@ -127,7 +129,7 @@ namespace Demo1
                         _table.emplace_back(card);
                     }
                 }
-
+                
                 createHints(cardSize, margin, startX, startY);
             }
 
@@ -164,11 +166,12 @@ namespace Demo1
 
             void createHint(int sumNumbers, int sumVoltorbs, int spriteIndex, Vector2 position, Vector2 size)
             {
-                auto font = Loader::getAsset<FontAsset>("fontRegular").get();
+                auto font = Loader::getAsset<FontAsset>("fontRegular");
 
                 auto hintCard = ActorManager::createActor<Actor>(position, size);
                 hintCard->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*hintCard, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(spriteIndex)));
                 _table.emplace_back(hintCard);
+                std::cout << "ok: "<< colorBlack.r << colorBlack.g << colorBlack.b << colorBlack.a << "???" << std::endl;
 
                 auto hintTextNum = ActorManager::createActor<Actor>(position + Vector2(40, 10), Vector2(12, 12));
                 std::string strNumCount = (sumNumbers <= 9) ? "0" + std::to_string(sumNumbers) : std::to_string(sumNumbers);
@@ -227,7 +230,7 @@ namespace Demo1
                 m_currentScore = 0;
                 m_gameOver = false;
 
-                createTable();
+                // createTable();
             }
     };
 }

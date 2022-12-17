@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <cmath>
 
 namespace Core
@@ -109,6 +110,16 @@ namespace Core
                 m_y = (m_y == 0) ? 0 : (m_y > 0) ? 1 : -1;
             }
 
+            friend std::ostream& operator<<(std::ostream& os, const Vector2& vec2)
+            {
+                std::ostringstream s;
+                s << "Vector2(" << vec2.m_x << ", " << vec2.m_y << ")";
+                std::string res = s.str();
+
+                os << res;
+
+                return os;
+            }
             void print()
             {
                 std::cout << m_x << ", " << m_y << std::endl;

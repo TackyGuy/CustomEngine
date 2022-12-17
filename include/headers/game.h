@@ -12,7 +12,6 @@
 #include "actor.h"
 #include "math.h"
 #include "basecomponent.h"
-#include "nullcomponent.h"
 #include "transformcomponent.h"
 #include "spriterenderercomponent.h"
 #include "collision.h"

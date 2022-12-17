@@ -9,8 +9,6 @@ void SpritesheetAsset::setTexture(SDL_Texture *tex)
 
 void SpritesheetAsset::initTexture()
 {
-    // std::cout << "initiating texture..." << std::endl;
-    // The width and the height of the texture
     int w, h;
     if (SDL_QueryTexture(_texture, NULL, NULL, &w, &h))
     {
@@ -85,12 +83,6 @@ std::shared_ptr<Sprite> SpritesheetAsset::getSpriteAt(const uint16_t& index)
         return nullptr;
     }
 }
-std::shared_ptr<Sprite> SpritesheetAsset::getCurrentSprite()
-{
-    if (m_currentSpriteIndex < _sprites.size() && m_currentSpriteIndex >= 0)
-        return _sprites.at(m_currentSpriteIndex);
-    else return nullptr;
-}
 std::vector<std::shared_ptr<Sprite>> SpritesheetAsset::getAllSprites()
 {
     std::vector<std::shared_ptr<Sprite>> sprites;
@@ -101,18 +93,4 @@ std::vector<std::shared_ptr<Sprite>> SpritesheetAsset::getAllSprites()
     }
     
     return sprites;
-}
-uint16_t SpritesheetAsset::getCurrentSpriteID()
-{
-    return m_currentSpriteIndex;
-}
-uint16_t SpritesheetAsset::getSpriteCount()
-{
-    return _sprites.size();
-}
-void SpritesheetAsset::setCurrentSprite(const uint16_t& index)
-{
-    if (index < _sprites.size() && index >= 0)
-        m_currentSpriteIndex = index;
-    else std::cout << "The index: '" << index << "' is invalid" << std::endl;
 }

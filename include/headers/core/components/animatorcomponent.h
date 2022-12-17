@@ -37,7 +37,7 @@ namespace Core
             /**
              * @brief Construct a new Animator Component object.
              * 
-             * @param broadcaster The actor that implements the IBroadcaster interface
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
              * @param spriteRenderer The SpriteRendererComponent to animate
              */
             AnimatorComponent(const BroadcasterInterface& p_broadcaster, SpriteRendererComponent& p_spriteRenderer) : 
@@ -71,14 +71,14 @@ namespace Core
              */
             void playSequence(const std::string& key);
             /**
-             * @brief Get a pointer to the AnimationSequence object.
+             * @brief Returns a pointer to the AnimationSequence object.
              * 
              * @param key The key of the animation sequence
              * @return AnimationSequence* 
              */
             std::shared_ptr<AnimationSequence> getSequence(const std::string& key);
             /**
-             * @brief Get a pointer to the Current AnimationSequence object.
+             * @brief Returns a pointer to the Current AnimationSequence object.
              * 
              * @return AnimationSequence* 
              */

@@ -9,26 +9,50 @@ namespace Core
     class FontAsset: public Asset
     {
         private:
-            const char *p_textPath;
-            uint16_t m_size;
-            TTF_Font *p_font;
+            TTF_Font *_font;
+            const int size;
 
         public:
-            ~FontAsset(){};
+            ~FontAsset()
+            {
+                TTF_CloseFont(_font);
+            };
 
-            FontAsset(const char *p_path, int size)
-            : Asset(p_path), m_size(size)
+            /**
+             * @brief Construct a new Font Asset object.
+             * 
+             * @param path The path of this Asset
+             */
+            FontAsset(const char *path, int p_size)
+            : Asset(path), size(p_size)
             {}
             
+            /**
+             * @brief Returns the Type of this Asset.
+             * 
+             * @return size_t 
+             */
             size_t getType()
             {
                 return std::hash<std::string>{}("Font");
             };
 
-            void setSize(uint16_t size);
-            uint16_t getSize();
-
+            /**
+             * @brief Set the Font of this FontAsset.
+             * 
+             * @param font a pointer to font
+             */
             void setFont(TTF_Font *font);
+            /**
+             * @brief Returns the Font object
+             * 
+             * @return TTF_Font* 
+             */
             TTF_Font *getFont();
+            /**
+             * @brief Returns the size of this Font
+             * 
+             */
+            const int getSize() const;
     };
 }
