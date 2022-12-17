@@ -23,21 +23,55 @@ namespace Core
             
             double m_speed = 1.0f;
             std::string m_currentEvent;
+
+            /**
+             * @brief Set m_currentEvent to a new value
+             * 
+             * @param strEvent The new event
+             */
             void setEvent(const std::string& strEvent);
+            /**
+             * @brief Sets the current frame to the the next frame in this animation
+             * 
+             */
+            void getNextFrame();
         public:
-            AnimationSequence(const std::string& str): name(str){}
-            AnimationSequence(const std::string& str, const std::vector<std::shared_ptr<Sprite>> frames)
-            : name(str), _frames(frames)
+            /**
+             * @brief Construct a new Animation Sequence object.
+             * 
+             * @param str The name of the animation
+             */
+            AnimationSequence(const std::string& pName): name(pName){}
+            /**
+             * @brief Construct a new Animation Sequence object.
+             * 
+             * @param pName The name of the animation
+             * @param frames A vector holding all the frames the animation should have
+             */
+            AnimationSequence(const std::string& pName, const std::vector<std::shared_ptr<Sprite>> frames)
+            : name(pName), _frames(frames)
             {}
             
-            AnimationSequence(const std::string& str, const std::vector<std::shared_ptr<Sprite>> frames, double speed)
-            : name(str), _frames(frames), m_speed(speed)
+            /**
+             * @brief Construct a new Animation Sequence object.
+             * 
+             * @param pName The name of the animation
+             * @param frames A vector holding all the frames the animation should have
+             * @param speed The speed at which this animation should play at
+             */
+            AnimationSequence(const std::string& pName, const std::vector<std::shared_ptr<Sprite>> frames, double speed)
+            : name(pName), _frames(frames), m_speed(speed)
             {}
 
+            /**
+             * @brief Get the name of this animation.
+             * 
+             * @return const std::string& 
+             */
             const std::string& getName() const;
 
             std::shared_ptr<Sprite> getCurrentFrame();
-            void getNextFrame();
+            
             /**
              * @brief Adds a sprite x times to this animation.
              * 
@@ -46,14 +80,38 @@ namespace Core
              * @param event The animation event the frame will send
              */
             void addFrameToSequence(std::shared_ptr<Sprite> sprite, uint16_t count = 1, const std::string& event = "");
+            /**
+             * @brief Remove a frame from the animation based of its index.
+             * 
+             * @param id The index of the frame to remove
+             */
             void deleteFrameFromSequence(uint16_t id);
+            /**
+             * @brief Get the number of frames in this animation.
+             * 
+             * @return uint16_t size of _frames
+             */
             uint16_t getSize();
 
             void setSpeed(double speed);
+            /**
+             * @brief Get the Speed of this animation.
+             * 
+             * @return double speed
+             */
             double getSpeed();
-            
+
+            /**
+             * @brief Get the Event of the current frame.
+             * 
+             * @return std::string& event
+             */
             std::string& getEvent();
 
+            /**
+             * @brief Restarts the animation to its first frame.
+             * 
+             */
             void reset();
     };
 }

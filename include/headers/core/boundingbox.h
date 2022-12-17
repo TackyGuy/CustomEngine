@@ -23,7 +23,7 @@ namespace Core
             ~BoundingBox(){};
 
             /**
-             * @brief Construct a new BoundingBox object
+             * @brief Construct a new BoundingBox object.
              * 
              * @param center The coordinates of the center of the box.
              * @param extents The extents (or wingspan) of the box from its center.
@@ -38,13 +38,13 @@ namespace Core
             BoundingBox(){}
 
             /**
-             * @brief Set the center of the BoundingBox to a new Vector2 and recalculates the minimums and maximums vectors
+             * @brief Set the center of the BoundingBox to a new Vector2 and recalculates the minimums and maximums vectors.
              * 
              * @param center The new position of the center
              */
             void setCenter(const Vector2& center);
             /**
-             * @brief Get the center of the BoundingBox as a Vector2
+             * @brief Get the center of the BoundingBox as a Vector2.
              * 
              * @return Vector2& A reference to the Vector2 representing the center
              */
@@ -65,32 +65,32 @@ namespace Core
             void expand(float x, float y);
             void expand(Vector2 vec2);
             /**
-             * @brief Set the Extents(wingspan) of the BoundingBox as a Vector2
+             * @brief Set the Extents(wingspan) of the BoundingBox as a Vector2.
              * 
              * @param vec2 
              */
             void setExtents(Vector2 vec2);
             /**
-             * @brief Get the extents(wingspan) of the BoundingBox as a Vector2
+             * @brief Get the extents(wingspan) of the BoundingBox as a Vector2.
              * 
              * @return Vector2& A reference to the Vector2 representing its extents
              */
             const Vector2& getExtents() const;
             /**
-             * @brief Get the size of the BoundingBox as a Vector2
+             * @brief Get the size of the BoundingBox as a Vector2.
              * 
              * @return Vector2& A reference to the Vector2 representing its size
              */
             const Vector2& getSize() const;
 
             /**
-             * @brief Get the Min object
+             * @brief Get the Min object.
              * 
              * @return Vector2& 
              */
             const Vector2& getMin() const;
             /**
-             * @brief Get the Max object
+             * @brief Get the Max object.
              * 
              * @return Vector2& 
              */

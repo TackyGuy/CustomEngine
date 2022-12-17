@@ -11,7 +11,7 @@ Game::~Game()
 {
     std::cout << "destroying game and cleaning up..." << std::endl;
     
-    m_window->cleanUp();
+    m_window.reset();
     TTF_Quit();
     Mix_Quit();
     SDL_Quit();

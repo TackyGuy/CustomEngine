@@ -16,12 +16,12 @@ bool Asset::isLoaded()
     return m_loaded;
 }
 
-void Asset::setPath(const char *p_path)
+void Asset::setPath(const char *path)
 {
-    p_textPath = p_path;
+    _textPath = path;
 }
 
 const char* Asset::getPath()
 {
-    return p_textPath;
+    return _textPath;
 }

@@ -4,6 +4,10 @@
 
 namespace Core
 {
+    /**
+     * @brief Interface that allows to broadcastMessages
+     * 
+     */
     class BroadcasterInterface
     {
         public:

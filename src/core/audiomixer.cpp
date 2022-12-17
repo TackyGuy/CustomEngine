@@ -18,13 +18,13 @@ const int AudioMixer::getSoundVolume() const
     return m_soundVolume;
 }
 
-void AudioMixer::playMusic(AudioAsset *music)
+void AudioMixer::playMusic(std::shared_ptr<AudioAsset> music)
 {
     _currentMusic = music;
     Mix_VolumeMusic(m_musicVolume);
     Mix_PlayMusic(_currentMusic->getMusic(), -1);
 }
-void AudioMixer::playSound(AudioAsset *sound)
+void AudioMixer::playSound(std::shared_ptr<AudioAsset> sound)
 {
     int channel =  Mix_PlayChannel(-1, sound->getSoundChunk(), 0);
     Mix_Volume(channel, m_soundVolume);

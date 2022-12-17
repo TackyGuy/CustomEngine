@@ -31,6 +31,14 @@ namespace Core
             }
 
             ~RigidbodyComponent(){}
+            /**
+             * @brief Construct a new RigidbodyComponent object
+             * 
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param transform The TransformComponent
+             * @param collider The ColliderComponent
+             * @param type The type of RigidBody this RigidbodyComponent should be
+             */
             RigidbodyComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> transform, std::shared_ptr<ColliderComponent> collider, Body type) : 
             BaseComponent(p_broadcaster), _transform(transform), _collider(collider), bodyType(type)
             {}
@@ -50,9 +58,24 @@ namespace Core
                 //
             }
 
+            /**
+             * @brief Set the velocity of this rigidbody.
+             * 
+             * @param vec2 
+             */
             void setVelocity(Vector2& vec2);
+            /**
+             * @brief Returns the velocity of this rigidbody.
+             * 
+             * @return const Vector2& 
+             */
             const Vector2& getVelocity() const;
 
+            /**
+             * @brief Returns the collider held by this rigidbody.
+             * 
+             * @return std::shared_ptr<ColliderComponent> 
+             */
             std::shared_ptr<ColliderComponent> getCollider();
     };
 }

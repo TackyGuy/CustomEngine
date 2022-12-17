@@ -15,25 +15,62 @@ namespace Core
             
         protected:
             bool m_loaded;
-            const char *p_textPath;
+            const char *_textPath;
         public:
             static const size_t NullType;
             static const size_t SpritesheetType;
             static const size_t FontAssetType;
             static const size_t AudioAssetType;
-            Asset(const char* p_path):p_textPath(p_path){}
+            /**
+             * @brief Construct a new Asset object.
+             * 
+             * @param path The path of where this asset is stored
+             */
+            Asset(const char* path):_textPath(path){}
             virtual ~Asset() = default;
 
+            /**
+             * @brief Set the m_loaded boolean to the designated value.
+             * 
+             * @param value The new value of m_loaded
+             */
             void setLoaded(bool value);
+            /**
+             * @brief Is this Asset loaded?
+             * 
+             * @return true if it has been loaded
+             * @return false if it has not been loaded
+             */
             bool isLoaded();
 
-            void setPath(const char *p_path);
+            /**
+             * @brief Set the Path of this asset.
+             * 
+             * @param p_path the Path as a char*
+             */
+            void setPath(const char *path);
+            /**
+             * @brief Get the Path of this Asset.
+             * 
+             * @return const char* 
+             */
             const char* getPath();
 
+            /**
+             * @brief Get the Type of this Asset.
+             * 
+             * @return size_t 
+             */
             virtual size_t getType()
             {
                 return NullType;
             }
+            /**
+             * @brief Get the Type of an Asset based of its class <T>.
+             * 
+             * @tparam T The class of the Asset
+             * @return size_t The Type of the asset
+             */
             template <class T>
             static size_t getTypeByClass()
             {
