@@ -14,12 +14,13 @@ namespace Core
     class ColliderComponent : public BaseComponent
     {
         private:
-            BoundingBox m_aabb;
+            TransformComponent &transform;
             std::string m_tag;
             
-            const TransformComponent &transform;
             bool m_isTrigger = false;
             bool m_dirtyFlag = false;
+            
+            BoundingBox m_aabb;
         public:
             static const size_t Type;
             const size_t getType() const override
@@ -37,7 +38,7 @@ namespace Core
              * @param str The tag of this collider
              * @param isTrigger Is this collider trigger only?
              */
-            ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : 
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, TransformComponent& p_transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : 
             BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), vec2)
             {}
             /**
@@ -48,7 +49,7 @@ namespace Core
              * @param str The tag of this collider
              * @param isTrigger Is this collider trigger only?
              */
-            ColliderComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& p_transform, const std::string& str = "", bool isTrigger = false) : 
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, TransformComponent& p_transform, const std::string& str = "", bool isTrigger = false) : 
             BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger)
             {
                 Vector2 extents(0, 0);
@@ -56,6 +57,9 @@ namespace Core
                 extents.multiply(0.5f);
                 m_aabb = BoundingBox(p_transform.getPositionCentered(), extents);
             }
+
+            ColliderComponent(ColliderComponent& other) = default;
+            ColliderComponent(ColliderComponent&& other) = default;
 
             /**
              * @brief Returns a reference to the BoundingBox of this collider.

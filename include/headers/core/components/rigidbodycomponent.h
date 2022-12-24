@@ -5,7 +5,7 @@
 #include "collidercomponent.h"
 #include "boundingbox.h"
 #include "collision.h"
-#include "math.h"
+#include "mathutils.h"
 
 namespace Core
 {
@@ -42,6 +42,18 @@ namespace Core
             RigidbodyComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> transform, std::shared_ptr<ColliderComponent> collider, Body type) : 
             BaseComponent(p_broadcaster), _transform(transform), _collider(collider), bodyType(type)
             {}
+
+            RigidbodyComponent(RigidbodyComponent& other) = default;
+            RigidbodyComponent(RigidbodyComponent&& other):
+                BaseComponent(other.broadcaster)
+            {
+                _transform = other._transform;
+                _collider = other._collider;
+                bodyType = other.bodyType;
+
+                other._transform = nullptr;
+                other._collider = nullptr;
+            }
 
             virtual void update(double dt, Stage& stage) override
             {

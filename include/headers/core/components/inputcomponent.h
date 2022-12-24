@@ -27,6 +27,9 @@ namespace Core
              */
             InputComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster){};
 
+            InputComponent(InputComponent& other) = default;
+            InputComponent(InputComponent&& other) = default;
+
             virtual void update(double dt, Stage& stage)
             {}
     };

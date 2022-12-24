@@ -10,22 +10,22 @@ namespace Core
     class Stage
     {
         private:
-            InputProvider m_inputProvider;
             double m_elapsedTime;
         protected:
             const int stageWidth;
             const int stageHeight;
             const int tileSize;
             
-            AudioMixer *_audioMixer = nullptr;
+            std::shared_ptr<AudioMixer> _audioMixer = nullptr;
+            std::shared_ptr<InputProvider> _inputProvider = nullptr;
 
             Vector2 center() const;
         public:
-            ~Stage(){};
-            Stage(int width, int height, int size, AudioMixer *mixer) : stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
+            virtual ~Stage(){};
+            Stage(int width, int height, int size, std::shared_ptr<AudioMixer> mixer) : stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
             {
-                m_inputProvider = InputProvider();
-                m_inputProvider.initialize();
+                _inputProvider = std::make_shared<InputProvider>(InputProvider());
+                _inputProvider->initialize();
             }
 
             /**
@@ -39,9 +39,9 @@ namespace Core
              */
             virtual void init()
             {
-                for (auto actor : ActorManager::actors)
+                for (auto actor : ActorManager::s_actors)
                 {
-                    actor->start(*this);
+                    actor->start();
                 }
             }
             /**
@@ -52,9 +52,9 @@ namespace Core
             virtual void update(double dt)
             {
                 m_elapsedTime += dt;
-                for (auto actor : ActorManager::actors)
+                for (auto actor : ActorManager::s_actors)
                 {
-                    actor->update(dt, *this);
+                    actor->update(dt);
                 }
             }
 
@@ -65,8 +65,8 @@ namespace Core
              */
             virtual void sendMessage(std::string msg) = 0;
 
-            InputProvider *getInputProvider();
-            AudioMixer *getAudioMixer();
+            std::shared_ptr<InputProvider> getInputProvider();
+            std::shared_ptr<AudioMixer> getAudioMixer();
             const double getTime() const;
     };
 }

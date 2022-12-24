@@ -24,7 +24,7 @@ namespace Sandbox
             std::shared_ptr<Actor> backgroundProp = nullptr;
         public: 
             ~SandboxStage(){};
-            SandboxStage(AudioMixer *mixer) : Stage(32, 23, 32, mixer){};
+            SandboxStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
 
             void preload() override
             {
@@ -43,7 +43,7 @@ namespace Sandbox
                 std::cout << "initializing test stage" << std::endl;
 
                 std::shared_ptr<Sprite> backgroundTile = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(3);
-                backgroundProp = ActorManager::createActor<Actor>(Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
+                backgroundProp = ActorManager::createActor<Actor>(*this, Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
                 backgroundProp->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*backgroundProp, backgroundTile));
                 const int numTiles = 16;
                 std::shared_ptr<Sprite> groundTiles[numTiles] = 
@@ -86,9 +86,8 @@ namespace Sandbox
                 {
                     for (auto y = 0; y < stageHeight; y++)
                     {
-                        auto newTile = ActorManager::createActor<Actor>(Vector2(x * tileSize, y * tileSize), Vector2(tileSize, tileSize));
+                        auto newTile = ActorManager::createActor<Actor>(*this, Vector2(x * tileSize, y * tileSize), Vector2(tileSize, tileSize));
                         std::shared_ptr<Sprite> tileSpr = nullptr;
-                        bool isWall = false;
 
                         if (x >= minX && x <= maxX) 
                         {
@@ -101,18 +100,14 @@ namespace Sandbox
                                     else if (x == minX && y == maxY) tileSpr = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(448);
                                     else if (x == maxX && y == maxY) tileSpr = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(449);
                                     else tileSpr = wallTiles[distrWall(randEng)];
-
-                                    isWall = true;
                                 }
                                 else if (y == minY)
                                 {
                                     tileSpr = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(402);
-                                    isWall = true;
                                 }
                                 else if (y == maxY)
                                 {
                                     tileSpr = Loader::getAsset<SpritesheetAsset>("tileset")->getSpriteAt(431);
-                                    isWall = true;
                                 }
                                 else tileSpr = groundTiles[distrGround(randEng)];
                             }
@@ -122,34 +117,34 @@ namespace Sandbox
                     }
                 }
 
-                auto leftWall = ActorManager::createActor<Actor>(Vector2((minX - 1) * tileSize, minY * tileSize), Vector2(1, 1));
+                auto leftWall = ActorManager::createActor<Actor>(*this, Vector2((minX - 1) * tileSize, minY * tileSize), Vector2(1, 1));
                 leftWall->addComponent<ColliderComponent>(ColliderComponent(*leftWall, *leftWall->getComponent<TransformComponent>(), Vector2(10, 500), "wall_left"));
                 leftWall->addComponent<RigidbodyComponent>(RigidbodyComponent(*leftWall, leftWall->getComponent<TransformComponent>(), 
                     leftWall->getComponent<ColliderComponent>(), RigidbodyComponent::Body::STATIC));
 
-                auto rightWall = ActorManager::createActor<Actor>(Vector2((maxX - 2) * tileSize, minY * tileSize), Vector2(1, 1));
+                auto rightWall = ActorManager::createActor<Actor>(*this, Vector2((maxX - 2) * tileSize, minY * tileSize), Vector2(1, 1));
                 rightWall->addComponent<ColliderComponent>(ColliderComponent(*rightWall, *rightWall->getComponent<TransformComponent>(), Vector2(10, 500), "wall_right"));
                 rightWall->addComponent<RigidbodyComponent>(RigidbodyComponent(*rightWall, rightWall->getComponent<TransformComponent>(), 
                     rightWall->getComponent<ColliderComponent>(), RigidbodyComponent::Body::STATIC));
 
-                auto topWall = ActorManager::createActor<Actor>(Vector2((minX - 1) * tileSize, (minY - 2) * tileSize), Vector2(1, 1));
+                auto topWall = ActorManager::createActor<Actor>(*this, Vector2((minX - 1) * tileSize, (minY - 2) * tileSize), Vector2(1, 1));
                 topWall->addComponent<ColliderComponent>(ColliderComponent(*topWall, *topWall->getComponent<TransformComponent>(), Vector2(800, 10), "wall_top"));
                 topWall->addComponent<RigidbodyComponent>(RigidbodyComponent(*topWall, topWall->getComponent<TransformComponent>(), 
                     topWall->getComponent<ColliderComponent>(), RigidbodyComponent::Body::STATIC));
 
-                auto bottomWall = ActorManager::createActor<Actor>(Vector2((minX - 1) * tileSize, (maxY - 2.25f) * tileSize), Vector2(1, 1));
+                auto bottomWall = ActorManager::createActor<Actor>(*this, Vector2((minX - 1) * tileSize, (maxY - 2.25f) * tileSize), Vector2(1, 1));
                 bottomWall->addComponent<ColliderComponent>(ColliderComponent(*bottomWall, *bottomWall->getComponent<TransformComponent>(), Vector2(800, 10), "wall_bottom"));
                 bottomWall->addComponent<RigidbodyComponent>(RigidbodyComponent(*bottomWall, bottomWall->getComponent<TransformComponent>(), 
                     bottomWall->getComponent<ColliderComponent>(), RigidbodyComponent::Body::STATIC));
                 
 
-                std::shared_ptr<Hero>player = ActorManager::createActor<Hero>(Vector2(250, 150), Vector2(128, 128));
+                std::shared_ptr<Hero>player = ActorManager::createActor<Hero>(*this, Vector2(250, 150), Vector2(128, 128));
 
-                _counter = ActorManager::createActor<Actor>(Vector2((center().getX() - 2) * tileSize, (minY - 1) * tileSize), Vector2(10, 10));
+                _counter = ActorManager::createActor<Actor>(*this, Vector2((center().getX() - 2) * tileSize, (minY - 1) * tileSize), Vector2(10, 10));
                 SDL_Color colorWhite = {255, 255, 255};
                 _counter->addComponent<TextComponent>(TextComponent(*_counter, "0", colorWhite, Loader::getAsset<FontAsset>("weiholmirRegular")));
 
-                auto buttonTest = ActorManager::createActor<Button>(Vector2((center().getX() - 1) * tileSize, center().getY() * tileSize), Vector2(80, 80));
+                auto buttonTest = ActorManager::createActor<Button>(*this, Vector2((center().getX() - 1) * tileSize, center().getY() * tileSize), Vector2(80, 80));
                 buttonTest->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*buttonTest, Loader::getAsset<SpritesheetAsset>("voltorb")->getSpriteAt(0)));
                 buttonTest->addComponent<ColliderComponent>(ColliderComponent(*buttonTest, *buttonTest->getComponent<TransformComponent>(), "ui", true));
                 buttonTest->setupButton(buttonTest->getComponent<ColliderComponent>(), buttonTest->getComponent<SpriteRendererComponent>(), nullptr);
@@ -164,13 +159,13 @@ namespace Sandbox
             void setUI()
             {
                 auto heartSprite = Loader::getAsset<SpritesheetAsset>("icons")->getSpriteAt(0);
-                auto heart = ActorManager::createActor<Actor>(Vector2(10, 10), Vector2(40, 40));
+                auto heart = ActorManager::createActor<Actor>(*this, Vector2(10, 10), Vector2(40, 40));
                 heart->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*heart, heartSprite));
 
-                auto heart2 = ActorManager::createActor<Actor>(Vector2(55, 10), Vector2(40, 40));
+                auto heart2 = ActorManager::createActor<Actor>(*this, Vector2(55, 10), Vector2(40, 40));
                 heart2->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*heart2, heartSprite));
 
-                auto heart3 = ActorManager::createActor<Actor>(Vector2(100, 10), Vector2(40, 40));
+                auto heart3 = ActorManager::createActor<Actor>(*this, Vector2(100, 10), Vector2(40, 40));
                 heart3->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*heart3, heartSprite));
             }
 

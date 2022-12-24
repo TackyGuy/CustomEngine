@@ -30,23 +30,23 @@ namespace Demo1
              * @param scale The scale of the button
              * @param id The id of the button
              */
-            Card(const Vector2& pos, const Vector2& scale, const int id): Button(pos, scale, id)
+            Card(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale): Button(r_stage, id, pos, scale)
             {
                 
             }
 
-            void start(Stage& stage) override
+            void start() override
             {
-                if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, _backSprite));
+                if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent{*this, _backSprite});
                 
-                this->addComponent<ColliderComponent>(ColliderComponent(*this, *this->getComponent<TransformComponent>(), "card"));
+                this->addComponent<ColliderComponent>(ColliderComponent{*this, *this->getComponent<TransformComponent>(), "card"});
                 _flipSfx = Loader::getAsset<AudioAsset>("sfxClick");
                 _selectSfx = Loader::getAsset<AudioAsset>("sfxSelect");
 
 
                 setupButton(this->getComponent<ColliderComponent>(), this->getComponent<SpriteRendererComponent>(), nullptr);
 
-                Actor::start(stage);
+                Actor::start();
             }
 
             void setCard(std::shared_ptr<Sprite> faceSprite, std::shared_ptr<Sprite> backSprite, std::shared_ptr<Sprite> hoverSprite, std::shared_ptr<AudioAsset> sfx, int val)
@@ -74,7 +74,7 @@ namespace Demo1
                 return value;
             }
 
-            void update(double dt, Stage& stage) override
+            void update(double dt) override
             {
                 //
             } 
@@ -88,11 +88,11 @@ namespace Demo1
                 if (!m_flipped)
                 {
                     reveal();
-                    _stage->getAudioMixer()->playSound(_sfx);
-                    if (m_isBomb) _stage->sendMessage("gameOver");
+                    stage.getAudioMixer()->playSound(_sfx);
+                    if (m_isBomb) stage.sendMessage("gameOver");
                     else
                     {
-                        _stage->sendMessage(std::to_string(value));
+                        stage.sendMessage(std::to_string(value));
                     }
                 }
             }
@@ -105,7 +105,7 @@ namespace Demo1
                 if (!m_flipped) 
                 {
                     _spriteRenderer->setSprite(_hoverSprite);
-                    _stage->getAudioMixer()->playSound(_selectSfx);
+                    stage.getAudioMixer()->playSound(_selectSfx);
                 }
             }
             void onHover() override {}

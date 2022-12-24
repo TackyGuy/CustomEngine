@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#include "mathutils.h"
 #include "renderercomponent.h"
 #include "spritesheetasset.h"
 #include "sprite.h"
@@ -57,6 +58,17 @@ namespace Core
             SpriteRendererComponent(const BroadcasterInterface& p_broadcaster, const SpriteRendererComponent& sr)
             : RendererComponent(p_broadcaster), _sprite(sr._sprite), m_rect(sr.m_rect)
             {}
+
+            SpriteRendererComponent(SpriteRendererComponent& other) = default;
+            SpriteRendererComponent(SpriteRendererComponent&& other):
+                RendererComponent(other.broadcaster)
+            {
+                _sprite = other._sprite;
+                m_rect = other.m_rect;
+                m_flipX = other.m_flipX;
+
+                other._sprite = nullptr;
+            }
 
             void render(SDL_Renderer *renderer, const Vector2& pos, const Vector2& size) override
             {

@@ -10,9 +10,9 @@ namespace Core
     class Sprite
     {
         private:
-            SDL_Rect m_rect;
-
             SDL_Texture *_tex = nullptr;
+
+            SDL_Rect m_rect;
             bool m_keepRatio;
         public:
             ~Sprite()

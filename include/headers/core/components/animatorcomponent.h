@@ -43,6 +43,14 @@ namespace Core
             AnimatorComponent(const BroadcasterInterface& p_broadcaster, SpriteRendererComponent& p_spriteRenderer) : 
             BaseComponent(p_broadcaster), spriteRenderer(p_spriteRenderer)
             {}
+            AnimatorComponent(AnimatorComponent& other) = default;
+            AnimatorComponent(AnimatorComponent&& other):
+                BaseComponent(other.broadcaster), spriteRenderer(other.spriteRenderer)
+            {
+                m_paused = other.m_paused;
+                m_lastMessage = other.m_lastMessage;
+                m_sequences = other.m_sequences;
+            }
 
             virtual void update(double dt, Stage& stage) override
             {

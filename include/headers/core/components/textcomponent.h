@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cmath>
 
-#include "math.h"
+#include "mathutils.h"
 #include "renderercomponent.h"
 #include "fontasset.h"
 
@@ -34,7 +34,7 @@ namespace Core
             ~TextComponent()
             {
                 SDL_FreeSurface(_surface);
-                if (_texture) SDL_DestroyTexture(_texture);
+                SDL_DestroyTexture(_texture);
             }
             /**
              * @brief Construct a new TextComponent object.
@@ -50,25 +50,13 @@ namespace Core
                 createSurface();
             }
 
-            TextComponent(TextComponent& other)
-            : RendererComponent(other.broadcaster)
-            {
-                m_text = other.m_text;
-                m_colour = other.m_colour;
-
-                _fontAsset = other._fontAsset;
-                m_dirty = true;
-
-                other._surface = nullptr;
-                other._texture = nullptr;
-
-                createSurface();
-            }
+            TextComponent(TextComponent& other) = default;
             TextComponent(TextComponent&& other):
                 RendererComponent(other.broadcaster)
             {
                 m_text = other.m_text;
                 m_colour = other.m_colour;
+                _surface = other._surface;
 
                 _fontAsset = other._fontAsset;
                 m_dirty = true;
@@ -77,25 +65,6 @@ namespace Core
                 other._texture = nullptr;
 
                 createSurface();
-            }
-
-            TextComponent& operator=(TextComponent&& other)
-            {
-                if (this != &other)
-                {
-                    m_text = other.m_text;
-                    m_colour = other.m_colour;
-
-                    _surface = other._surface;
-                    _texture = other._texture;
-                    _fontAsset = other._fontAsset;
-                    m_dirty = true;
-
-                    other._surface = nullptr;
-                    other._texture = nullptr;
-
-                    return *this;
-                }
             }
 
             virtual void update (double dt, Stage& stage) override
@@ -111,7 +80,7 @@ namespace Core
 
                 if (!_texture) 
                 {
-                    // std::cout << "texture invalid" << std::endl;
+                    m_dirty = true;
                     return;
                 }
                 int texW = 0;
@@ -180,7 +149,7 @@ namespace Core
              * 
              * @param texture The new SDL_Texture
              */
-            void setTexture(SDL_Texture * texture);
+            void setTexture(SDL_Texture *texture);
             /**
              * @brief Returns the current texture of this textcomponent.
              * 

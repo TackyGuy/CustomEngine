@@ -2,12 +2,12 @@
 
 using namespace Core;
 
-InputProvider *Stage::getInputProvider()
+std::shared_ptr<InputProvider> Stage::getInputProvider()
 {
-    return &m_inputProvider;
+    return _inputProvider;
 }
 
-AudioMixer *Stage::getAudioMixer()
+std::shared_ptr<AudioMixer> Stage::getAudioMixer()
 {
     return _audioMixer;
 }

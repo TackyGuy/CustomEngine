@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 
-#include "math.h"
+#include "mathutils.h"
 #include "collision.h"
 #include "boundingbox.h"
 
@@ -12,7 +12,7 @@ namespace Core
     class UserInterface
     {
         public:
-
+            virtual ~UserInterface(){};
             /**
              * @brief How the UI element should act upon being clicked on
              * 
@@ -39,6 +39,8 @@ namespace Core
              * @return ColliderComponent* a pointer to the ColliderComponent
              */
             virtual std::shared_ptr<ColliderComponent> getCollider() = 0;
+
+            
     };
     class UIManager
     {
@@ -46,10 +48,10 @@ namespace Core
             ~UIManager(){};
             UIManager(){};
         public:
-            inline static std::map<uint16_t, std::shared_ptr<UserInterface>> s_uiElements;
+            inline static std::map<uint16_t, UserInterface*> s_uiElements;
 
             inline static int16_t addElement(UserInterface *uiElement)
-            {
+            {   
                 int16_t index = s_uiElements.size();
                 s_uiElements.emplace(index, uiElement);
 
@@ -60,7 +62,7 @@ namespace Core
                 s_uiElements.erase(index);
             }
 
-            inline static std::shared_ptr<UserInterface> checkOverlapWithUI(const BoundingBox& mouseBox)
+            inline static UserInterface *checkOverlapWithUI(const BoundingBox& mouseBox)
             {
                 for (auto pair : s_uiElements)
                 {

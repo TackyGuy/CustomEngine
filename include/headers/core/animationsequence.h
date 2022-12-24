@@ -36,6 +36,7 @@ namespace Core
              */
             void getNextFrame();
         public:
+            ~AnimationSequence(){}
             /**
              * @brief Construct a new Animation Sequence object.
              * 

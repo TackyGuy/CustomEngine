@@ -4,7 +4,7 @@
 #include <string.h>
 #include <iostream>
 
-#include "math.h"
+#include "mathutils.h"
 #include "userinterface.h"
 
 namespace Core
@@ -18,10 +18,17 @@ namespace Core
             Uint32 m_mouseState;
             Vector2 m_mousePos;
 
-            std::shared_ptr<UserInterface> _currentHovered = nullptr;
+            UserInterface *_currentHovered = nullptr;
             
         public:
-            ~InputProvider(){}
+            ~InputProvider()
+            {
+                delete _previousInput;
+                delete _currentInput;
+
+                delete _currentHovered;
+                _currentHovered = nullptr;
+            }
             InputProvider()
             {}
 

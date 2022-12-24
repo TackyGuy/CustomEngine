@@ -11,6 +11,7 @@ Game::~Game()
 {
     std::cout << "destroying game and cleaning up..." << std::endl;
     
+    delete m_stage;
     m_window.reset();
     TTF_Quit();
     Mix_Quit();
@@ -57,7 +58,7 @@ void Game::init(const char* title, int x, int y)
 
     Loader::init(*m_window);
 
-    m_mixer = new AudioMixer(0.5);
+    m_mixer = std::make_shared<AudioMixer>(AudioMixer(0.5));
 
     // m_stage = new SandboxStage(m_mixer);
     m_stage = new Demo1::VoltorbStage(m_mixer);
@@ -108,7 +109,7 @@ void Game::render()
 {
     m_window->clear();
 
-    for (std::weak_ptr<Actor> weakPtr : ActorManager::actors)
+    for (std::weak_ptr<Actor> weakPtr : ActorManager::s_actors)
     {
         auto actor = weakPtr.lock();
         if (actor) actor->render(m_window.get());
@@ -119,7 +120,7 @@ void Game::render()
 
 void Game::handleCollisions()
 {
-    for (std::weak_ptr<Actor> weakPtr : ActorManager::actors)
+    for (std::weak_ptr<Actor> weakPtr : ActorManager::s_actors)
     {
         auto actor = weakPtr.lock();
         if (!actor) return;

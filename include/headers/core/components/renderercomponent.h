@@ -2,7 +2,7 @@
 
 #include "SDL.h"
 #include "basecomponent.h"
-#include "math.h"
+#include "mathutils.h"
 
 namespace Core
 {

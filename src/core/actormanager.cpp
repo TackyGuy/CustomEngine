@@ -3,11 +3,11 @@ using namespace Core;
 
 void ActorManager::registerActor(std::shared_ptr<Actor> a)
 {
-    actors.push_back(a);
-    std::cout << "Actor registered" << std::endl;
+    s_actors.push_back(a);
+    // std::cout << "Actor registered" << std::endl;
 }
 
 void ActorManager::deleteActor(Actor actor)
 {
-    actors.erase(actors.begin() + actor.getID());
+    s_actors.erase(s_actors.begin() + actor.getID());
 }

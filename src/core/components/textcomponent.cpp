@@ -44,7 +44,7 @@ SDL_Surface *TextComponent::getSurface()
 
 void TextComponent::setTexture(SDL_Texture *texture)
 {
-    if (!_texture) return;
+    if (!texture) return;
 
     SDL_DestroyTexture(_texture);
     _texture = texture;

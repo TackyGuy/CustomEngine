@@ -11,7 +11,7 @@ namespace Sandbox
         #define MOVE_STATE 2
         #define COMBAT_STATE 4
 
-        unsigned flags = IDLE_STATE;
+        int flags = IDLE_STATE;
 
         void setFlag(int flag, bool val = true)
         {

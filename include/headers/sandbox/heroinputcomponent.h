@@ -16,7 +16,7 @@ namespace Sandbox
             std::shared_ptr<Core::RigidbodyComponent> _rigidbody = nullptr;
             std::shared_ptr<Core::AnimatorComponent> _animator = nullptr;
 
-            double m_runSpeed = 85;
+            const double m_runSpeed = 85;
 
             double m_lastAttack = -100;
             const double attackRate = 0.4;
@@ -27,31 +27,47 @@ namespace Sandbox
             : Core::InputComponent(p_broadcaster), heroStates(states), _rigidbody(rigidbody), _animator(animator)
             {}
 
+            HeroInputComponent(HeroInputComponent& other)
+            : InputComponent(other.broadcaster), heroStates(other.heroStates)
+            {
+                _rigidbody = other._rigidbody;
+                _animator = other._animator;
+            }
+            HeroInputComponent(HeroInputComponent&& other):
+                InputComponent(other.broadcaster), heroStates(other.heroStates)
+            {
+                _rigidbody = other._rigidbody;
+                _animator = other._animator;
+
+                other._rigidbody = nullptr;
+                other._animator = nullptr;
+            }
+
             virtual void update(double dt, Core::Stage& stage) override
             {
-                Core::InputProvider *pInputProvider = stage.getInputProvider();
+                auto inputProvider = stage.getInputProvider();
                 Core::Vector2 velocity;
 
-                if (pInputProvider->isKeyPressed(SDL_SCANCODE_UP))
+                if (inputProvider->isKeyPressed(SDL_SCANCODE_UP))
                 {
                     velocity = Core::Vector2(0, -m_runSpeed * dt);
                 }
-                else if (pInputProvider->isKeyPressed(SDL_SCANCODE_RIGHT))
+                else if (inputProvider->isKeyPressed(SDL_SCANCODE_RIGHT))
                 {
                     velocity = Core::Vector2(m_runSpeed * dt, 0);
                     if (!heroStates.hasFlag(COMBAT_STATE)) _animator->flipRenderer(false);
                 }
-                else if (pInputProvider->isKeyPressed(SDL_SCANCODE_DOWN))
+                else if (inputProvider->isKeyPressed(SDL_SCANCODE_DOWN))
                 {
                     velocity = Core::Vector2(0, m_runSpeed * dt);
                 }
-                else if (pInputProvider->isKeyPressed(SDL_SCANCODE_LEFT))
+                else if (inputProvider->isKeyPressed(SDL_SCANCODE_LEFT))
                 {
                     velocity = Core::Vector2(-m_runSpeed * dt, 0);
                     if (!heroStates.hasFlag(COMBAT_STATE)) _animator->flipRenderer(true);
                 }
 
-                if (!heroStates.hasFlag(COMBAT_STATE) && pInputProvider->isKeyPressed(SDL_SCANCODE_Z))
+                if (!heroStates.hasFlag(COMBAT_STATE) && inputProvider->isKeyPressed(SDL_SCANCODE_Z))
                 {
                     double curTime = stage.getTime();
                     if (m_lastAttack + attackRate < curTime)

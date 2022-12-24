@@ -2,7 +2,7 @@
 
 #include "collidercomponent.h"
 #include "boundingbox.h"
-#include "math.h"
+#include "mathutils.h"
 
 #include <string>
 #include <vector>
@@ -15,8 +15,8 @@ namespace Core
         Node *Parent = nullptr;
         std::vector<Node*> Children;
 
-        BoundingBox AABB;
         std::shared_ptr<ColliderComponent> Collider = nullptr;
+        BoundingBox AABB;
 
         bool IsDirty = false;
 
@@ -41,7 +41,7 @@ namespace Core
         Node *removeChildAt(int index)
         {
             Node *childNode = nullptr;
-            if (index >= 0 && index < Children.size()) 
+            if (index >= 0 && index < (int)Children.size()) 
             {
                 childNode = Children[index];
                 Children.erase(Children.begin()+index);
@@ -68,7 +68,7 @@ namespace Core
                 
                 std::cout << "I have " << Children.size() << " branche(s): " << std::endl;
                 
-                for (int i = 0; i < Children.size(); i++) Children[i]->printChildren(depth);
+                for (int i = 0; i < (int)Children.size(); i++) Children[i]->printChildren(depth);
             }
             else 
             {

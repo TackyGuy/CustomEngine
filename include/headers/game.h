@@ -10,7 +10,6 @@
 #include "audiomixer.h"
 #include "actormanager.h"
 #include "actor.h"
-#include "math.h"
 #include "basecomponent.h"
 #include "transformcomponent.h"
 #include "spriterenderercomponent.h"
@@ -47,7 +46,7 @@ class Game
         Stage *m_stage = nullptr;
 
         std::shared_ptr<RenderWindow> m_window;
-        AudioMixer *m_mixer = nullptr;
+        std::shared_ptr<AudioMixer> m_mixer = nullptr;
         int windowRefreshRate;
         GameState m_GameState;
 

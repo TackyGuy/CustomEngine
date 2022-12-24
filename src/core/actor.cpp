@@ -3,22 +3,12 @@ using namespace Core;
 
 void Actor::init()
 {
-    this->addComponent<TransformComponent>(TransformComponent(*this, _transform->getPosition(), _transform->getScale()));
-    _transform.reset();
-    _transform = this->getComponent<TransformComponent>();
+    this->addComponent<TransformComponent>(_transform);
+    // _transform.reset();
+    // _transform = this->getComponent<TransformComponent>();
 }
 
 int Actor::getID()
 {
     return m_id;
-}
-
-void Actor::setParent(Actor* parent)
-{
-    _parent = parent;
-}
-
-Actor* Actor::getParent()
-{
-    return _parent;
 }

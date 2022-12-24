@@ -4,7 +4,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-#include "math.h"
+#include "mathutils.h"
 
 namespace Core
 {

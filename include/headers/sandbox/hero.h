@@ -8,7 +8,7 @@
 #include "rigidbodycomponent.h"
 #include "collidercomponent.h"
 #include "heroinputcomponent.h"
-#include "math.h"
+#include "mathutils.h"
 
 #include "loader.h"
 
@@ -25,10 +25,10 @@ namespace Sandbox
             HeroStates currentState;
         public:
             ~Hero(){}
-            Hero(const Vector2& pos, const Vector2& scale, const int id)
-            : Actor(pos, scale, id){}
+            Hero(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale)
+            : Actor(r_stage, id, pos, scale){}
 
-            void start(Stage& stage) override
+            void start() override
             {
                 std::shared_ptr<Sprite> sprite = Loader::getAsset<SpritesheetAsset>("hero")->getSpriteAt(2);
                 this->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, sprite));
@@ -120,12 +120,9 @@ namespace Sandbox
 
                 
             }
-            void update (double dt, Stage& stage) override
+            void update (double dt) override
             {
-                for (auto component : _components)
-                {
-                    component.second->update(dt, stage);
-                }
+                Actor::update(dt);
             }
     };
 }

@@ -25,8 +25,11 @@ namespace Demo1
 
             SDL_Color colorBlack = {0, 0, 0};
         public:
-            ~VoltorbStage(){};
-            VoltorbStage(AudioMixer *mixer) : Stage(32, 23, 32, mixer){};
+            ~VoltorbStage()
+            {
+                
+            }
+            VoltorbStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
 
             void preload() override
             {
@@ -51,6 +54,9 @@ namespace Demo1
                 std::cout << "Welcome to Voltorb Flip!" << std::endl;
 
                 createTable();
+                // auto test = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(55, 55));
+                // test->addComponent<TextComponent>(TextComponent(*test, "HELLO???", SDL_Color{255, 255, 255}, Loader::getAsset<FontAsset>("fontLarge")));
+
 
                 _audioMixer->setMusicVolume(2);
                 _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain"));
@@ -62,7 +68,7 @@ namespace Demo1
 
             void createTable()
             {
-                auto backgroundProp = ActorManager::createActor<Actor>(Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
+                auto backgroundProp = ActorManager::createActor<Actor>(*this, Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
                 backgroundProp->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*backgroundProp, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(0)));
                 _table.emplace_back(backgroundProp);
 
@@ -91,15 +97,15 @@ namespace Demo1
                     {
                         Vector2 pos = Vector2(startX + x * (cardSize + margin), startY + y * (cardSize + margin));
                         // We create the visual wires here also
-                        auto wireY = ActorManager::createActor<Actor>(pos + Vector2(0, 15), Vector2(cardSize, cardSize));
+                        auto wireY = ActorManager::createActor<Actor>(*this, pos + Vector2(0, 15), Vector2(cardSize, cardSize));
                         wireY->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*wireY, spritesheet->getSpriteAt(32 + x)));
                         _table.emplace_back(wireY);
 
-                        auto wireX = ActorManager::createActor<Actor>(pos + Vector2(15, 0), Vector2(cardSize, cardSize));
+                        auto wireX = ActorManager::createActor<Actor>(*this, pos + Vector2(15, 0), Vector2(cardSize, cardSize));
                         wireX->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*wireX, spritesheet->getSpriteAt(37 + y)));
                         _table.emplace_back(wireX);
 
-                        std::shared_ptr<Card> card = ActorManager::createActor<Card>(pos, Vector2(cardSize, cardSize));
+                        auto card = ActorManager::createActor<Card>(*this, pos, Vector2(cardSize, cardSize));
 
                         int cardIndex = distrCardFaces(randEngine);
                         if (cardIndex < 4) m_requiredScore *= cardIndex;
@@ -168,17 +174,16 @@ namespace Demo1
             {
                 auto font = Loader::getAsset<FontAsset>("fontRegular");
 
-                auto hintCard = ActorManager::createActor<Actor>(position, size);
+                auto hintCard = ActorManager::createActor<Actor>(*this, position, size);
                 hintCard->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*hintCard, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(spriteIndex)));
                 _table.emplace_back(hintCard);
-                std::cout << "ok: "<< colorBlack.r << colorBlack.g << colorBlack.b << colorBlack.a << "???" << std::endl;
 
-                auto hintTextNum = ActorManager::createActor<Actor>(position + Vector2(40, 10), Vector2(12, 12));
+                auto hintTextNum = ActorManager::createActor<Actor>(*this, position + Vector2(40, 10), Vector2(12, 12));
                 std::string strNumCount = (sumNumbers <= 9) ? "0" + std::to_string(sumNumbers) : std::to_string(sumNumbers);
                 hintTextNum->addComponent<TextComponent>(TextComponent(*hintTextNum, strNumCount.c_str(), colorBlack, font));
                 _table.emplace_back(hintTextNum);
 
-                auto hintTextVolt = ActorManager::createActor<Actor>(position + Vector2(55, 45), Vector2(15, 15));
+                auto hintTextVolt = ActorManager::createActor<Actor>(*this, position + Vector2(55, 45), Vector2(15, 15));
                 hintTextVolt->addComponent<TextComponent>(TextComponent(*hintTextVolt, std::to_string(sumVoltorbs).c_str(), colorBlack, font));
                 _table.emplace_back(hintTextVolt);
 
@@ -218,6 +223,7 @@ namespace Demo1
                 {
                     for (auto card : arr) card->reveal();
                 }
+                return;
                 // TODO Wait for input before continuing
                 for (int i = 0; i < _table.size(); i++)
                 {
@@ -230,6 +236,7 @@ namespace Demo1
                 m_currentScore = 0;
                 m_gameOver = false;
 
+                // TODO find why this is crashing
                 // createTable();
             }
     };

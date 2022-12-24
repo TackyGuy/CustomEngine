@@ -7,6 +7,9 @@
 			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
 			"args": [
 				"-fdiagnostics-color=always",
+				"-Wall",
+				"-Wno-unknown-pragmas",
+				"-Wno-sign-compare",
 				"-g",
 				"-std=c++17",
 				"-I${workspaceFolder}\\include",

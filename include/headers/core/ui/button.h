@@ -7,7 +7,7 @@
 #include "userinterface.h"
 #include "textcomponent.h"
 #include "spriterenderercomponent.h"
-#include "../math.h"
+#include "mathutils.h"
 
 namespace Core
 {
@@ -33,8 +33,15 @@ namespace Core
              * @param scale The scale of the button
              * @param id The id of the button
              */
-            Button(const Vector2& pos, const Vector2& scale, const int id): Actor(pos, scale, id)
+            Button(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale): Actor(r_stage, id, pos, scale)
             {
+                
+            }
+
+            void init() override
+            {
+                Actor::init();
+                
                 uiID = UIManager::addElement(this);
             }
 

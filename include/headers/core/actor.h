@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "renderwindow.h"
-#include "math.h"
+#include "mathutils.h"
 
 #include "broadcasterinterface.h"
 #include "basecomponent.h"
@@ -24,14 +24,11 @@ namespace Core
     class Actor : public BroadcasterInterface
     {
         protected:
+            Stage &stage;
             int m_id;
 
             std::unordered_map<std::size_t, std::shared_ptr<BaseComponent>> _components;
             std::shared_ptr<TransformComponent> _transform = nullptr;
-
-            Stage *_stage = nullptr;
-            Actor *_parent = nullptr;
-            std::vector<Actor*> m_children;
 
         public:
             ~Actor()
@@ -43,28 +40,27 @@ namespace Core
              * @param pos Vector that represents the position of the actor
              * @param id Id of the actor
              */
-            Actor(const Vector2 pos, const int id)
-            : m_id(id)
+            Actor(Stage &r_stage, const int id, const Vector2 pos)
+            : stage(r_stage), m_id(id)
             {
                 _transform = std::make_shared<TransformComponent>(*this, pos, Vector2(1, 1));
-                init();
             }
-            Actor(const Vector2 pos, const Vector2 scale, const int id) : m_id(id)
+            Actor(Stage &r_stage, const int id, const Vector2 pos, const Vector2 scale) : stage(r_stage), m_id(id)
             {
                 _transform = std::make_shared<TransformComponent>(*this, pos, scale);
-                init();
             }
+            
 
             // Returns the id of this actor
             int getID();
 
-            void init();
+            virtual void init();
 
-            virtual void start(Stage& stage)
+            virtual void start()
             {
-                _stage = &stage;
+                
             }
-            virtual void update(double dt, Stage& stage)
+            virtual void update(double dt)
             {
                 for (auto component : _components)
                 {
@@ -93,17 +89,33 @@ namespace Core
              * @param cmpt The component to add
              */
             template <class T>
-            void addComponent(T cmpt)
+            void addComponent(T &&cmpt)
             {
-                // std::cout << "address: " << &cmpt << std::endl;
                 if (_components.find(T::Type) != _components.end())
                 {
                     std::cout << "This component ALREADY exists" << std::endl;
                     return;
                 }
                 // else std::cout << "Adding new component..." << std::endl;
-                std::shared_ptr<T> c = std::make_shared<T>(cmpt);
-                _components.emplace(T::Type, c);
+                auto component = std::make_shared<T>(std::forward<T>(cmpt));
+                _components.emplace(T::Type, component);
+            }
+            /**
+             * @brief Attaches a component to the actor and adds it to the _components unordered map.
+             * 
+             * @tparam T The type of the component
+             * @param cmpt The component to add
+             */
+            template <class T>
+            void addComponent(std::shared_ptr<T> cmpt)
+            {
+                if (_components.find(T::Type) != _components.end())
+                {
+                    std::cout << "This component ALREADY exists" << std::endl;
+                    return;
+                }
+                // else std::cout << "Adding new component..." << std::endl;
+                _components.emplace(T::Type, cmpt);
             }
             /**
              * @brief Get a Component object by its type.

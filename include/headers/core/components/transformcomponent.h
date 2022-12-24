@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math.h"
+#include "mathutils.h"
 
 #include "basecomponent.h"
 
@@ -58,6 +58,9 @@ namespace Core
             TransformComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& transform)
             : BaseComponent(p_broadcaster), m_position(transform.m_position), m_scale(transform.m_scale), m_center(transform.m_center)
             {}
+
+            TransformComponent(const TransformComponent& other) = default;
+            TransformComponent(TransformComponent&& other) = default;
 
             /**
              * @brief Move the transformcomponent by a designated distance.
