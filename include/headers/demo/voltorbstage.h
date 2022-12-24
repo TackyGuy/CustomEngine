@@ -27,7 +27,7 @@ namespace Demo1
         public:
             ~VoltorbStage()
             {
-                
+
             }
             VoltorbStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
 
@@ -97,11 +97,11 @@ namespace Demo1
                     {
                         Vector2 pos = Vector2(startX + x * (cardSize + margin), startY + y * (cardSize + margin));
                         // We create the visual wires here also
-                        auto wireY = ActorManager::createActor<Actor>(*this, pos + Vector2(0, 15), Vector2(cardSize, cardSize));
+                        auto wireY = ActorManager::createActor<Actor>(*this, pos + Vector2(0, 19), Vector2(cardSize, cardSize));
                         wireY->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*wireY, spritesheet->getSpriteAt(32 + x)));
                         _table.emplace_back(wireY);
 
-                        auto wireX = ActorManager::createActor<Actor>(*this, pos + Vector2(15, 0), Vector2(cardSize, cardSize));
+                        auto wireX = ActorManager::createActor<Actor>(*this, pos + Vector2(19, 0), Vector2(cardSize, cardSize));
                         wireX->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*wireX, spritesheet->getSpriteAt(37 + y)));
                         _table.emplace_back(wireX);
 
