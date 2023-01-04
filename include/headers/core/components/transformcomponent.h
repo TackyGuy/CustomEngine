@@ -5,6 +5,7 @@
 #include "basecomponent.h"
 
 #include <iostream>
+#include <vector>
 #include <string.h>
 #include <sstream>
 
@@ -14,10 +15,16 @@ namespace Core
     {
         private:
             Vector2 m_position;
+            Vector2 m_localPosition;
             Vector2 m_scale;
+            Vector2 m_localScale;
             Vector2 m_center;
 
+            std::shared_ptr<TransformComponent> _parentTransform = nullptr;
+            std::vector<std::shared_ptr<TransformComponent>> _childTransforms;
+
             void calculateCenter();
+            void updateChildTransforms();
         public:
             static const size_t Type;
             const size_t getType() const override
@@ -31,8 +38,9 @@ namespace Core
              * 
              * @param p_broadcaster The actor that implements the IBroadcaster interface
              */
-            TransformComponent(const BroadcasterInterface& p_broadcaster) :BaseComponent(p_broadcaster)
+            TransformComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> parent) :BaseComponent(p_broadcaster)
             {
+                _parentTransform = parent;
                 m_position = Vector2(0, 0);
                 m_scale = Vector2(0, 0);
                 m_center = Vector2(0, 0);
@@ -44,9 +52,10 @@ namespace Core
              * @param pos The position
              * @param scale The scale
              */
-            TransformComponent(const BroadcasterInterface& p_broadcaster, const Vector2& pos, const Vector2& scale)
+            TransformComponent(const BroadcasterInterface& p_broadcaster, const Vector2& pos, const Vector2& scale, std::shared_ptr<TransformComponent> parent)
             : BaseComponent(p_broadcaster), m_position(pos), m_scale(scale)
             {
+                _parentTransform = parent;
                 calculateCenter();
             }
             /**
@@ -90,6 +99,19 @@ namespace Core
              */
             void setPosition(float x, float y);
             /**
+             * @brief Set the position of the transformcomponent to a new one.
+             * 
+             * @param pos A Vector2 holding the new position
+             */
+            void setLocalPosition(const Vector2& pos);
+            /**
+             * @brief Set the position of the transformcomponent to a new one.
+             * 
+             * @param x Float holding the x coordinate of the new position
+             * @param y Float holding the y coordinate of the new position
+             */
+            void setLocalPosition(float x, float y);
+            /**
              * @brief Returns the current position of this transformcomponent.
              * 
              * @return const Vector2& The position
@@ -101,6 +123,12 @@ namespace Core
              * @return const Vector2& The center
              */
             const Vector2& getPositionCentered() const;
+            /**
+             * @brief Returns the current position of this transformcomponent.
+             * 
+             * @return const Vector2& The position
+             */
+            const Vector2& getLocalPosition() const;
             
             /**
              * @brief Set the scale of this transformcomponent.
@@ -121,6 +149,8 @@ namespace Core
              * @return const Vector2& Vector2 representing the scale
              */
             const Vector2& getScale() const;
+
+            void attachChild(std::shared_ptr<TransformComponent> child);
 
             std::string toString();
     };

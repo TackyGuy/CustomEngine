@@ -25,6 +25,7 @@ void InputProvider::handleKeyboard()
 void InputProvider::handleMouse()
 {
     int mouseX, mouseY;
+    m_previousMouseState = m_mouseState;
     m_mouseState = SDL_GetMouseState(&mouseX, &mouseY);
 
     m_mousePos.set(mouseX, mouseY);
@@ -39,7 +40,15 @@ void InputProvider::handleEventsUI()
 
     if (touchedElement)
     {
-        if (isMouseButtonPressed(0)) touchedElement->onClick();
+        if (isMouseButtonTriggered(0)) touchedElement->onClickBegin(0);
+        else if (isMouseButtonTriggered(1)) touchedElement->onClickBegin(1);
+        else if (isMouseButtonTriggered(2)) touchedElement->onClickBegin(2);
+        else if (isMouseButtonPressed(0)) touchedElement->onClick(0);
+        else if (isMouseButtonPressed(1)) touchedElement->onClick(1);
+        else if (isMouseButtonPressed(2)) touchedElement->onClick(2);
+        else if (isMouseButtonReleased(0)) touchedElement->onClickEnd(0);
+        else if (isMouseButtonReleased(1)) touchedElement->onClickEnd(1);
+        else if (isMouseButtonReleased(2)) touchedElement->onClickEnd(2);
         else if (touchedElement != _currentHovered) touchedElement->onHoverBegin();
         else touchedElement->onHover();
     }
@@ -65,18 +74,39 @@ bool InputProvider::isKeyReleased(const SDL_Scancode keyCode) const
     return (_currentInput[keyCode] == 0 && _previousInput[keyCode] == 1);
 }
 
+bool InputProvider::isMouseButtonTriggered(int mouseButton) const
+{
+    switch (mouseButton)
+    {
+        case 0:
+            if ((m_mouseState & SDL_BUTTON_LMASK) && !(m_previousMouseState & SDL_BUTTON_LMASK)) return true;
+            break;
+        case 1:
+            if ((m_mouseState & SDL_BUTTON_MMASK) && !(m_previousMouseState & SDL_BUTTON_MMASK)) return true;
+            break;
+        case 2:
+            if ((m_mouseState & SDL_BUTTON_RMASK) && !(m_previousMouseState & SDL_BUTTON_RMASK)) return true;
+            break;
+        
+        default:
+            return false;
+            break;
+    }
+
+    return false;
+}
 bool InputProvider::isMouseButtonPressed(int mouseButton) const
 {
     switch (mouseButton)
     {
         case 0:
-            if ((m_mouseState & SDL_BUTTON_LMASK) != 0) return true;
+            if ((m_mouseState & SDL_BUTTON_LMASK)) return true;
             break;
         case 1:
-            if ((m_mouseState & SDL_BUTTON_MMASK) != 0) return true;
+            if ((m_mouseState & SDL_BUTTON_MMASK)) return true;
             break;
         case 2:
-            if ((m_mouseState & SDL_BUTTON_RMASK) != 0) return true;
+            if ((m_mouseState & SDL_BUTTON_RMASK)) return true;
             break;
         
         default:
@@ -88,5 +118,27 @@ bool InputProvider::isMouseButtonPressed(int mouseButton) const
 }
 bool InputProvider::isMouseButtonReleased(int mouseButton) const
 {
+    switch (mouseButton)
+    {
+        case 0:
+            if (!(m_mouseState & SDL_BUTTON_LMASK) && (m_previousMouseState & SDL_BUTTON_LMASK)) return true;
+            break;
+        case 1:
+            if (!(m_mouseState & SDL_BUTTON_MMASK) && (m_previousMouseState & SDL_BUTTON_MMASK)) return true;
+            break;
+        case 2:
+            if (!(m_mouseState & SDL_BUTTON_RMASK) && (m_previousMouseState & SDL_BUTTON_RMASK)) return true;
+            break;
+        
+        default:
+            return false;
+            break;
+    }
+
     return false;
+}
+
+const Vector2& InputProvider::getMousePosition() const
+{
+    return m_mousePos;
 }

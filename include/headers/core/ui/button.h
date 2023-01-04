@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <functional>
 
 #include "actor.h"
 #include "userinterface.h"
@@ -14,17 +15,25 @@ namespace Core
     class Button : public Actor, public UserInterface
     {
         private:
-            int16_t uiID;
+            int16_t uiID = -1;
+
         protected:
             std::shared_ptr<ColliderComponent> _collider = nullptr;
             std::shared_ptr<SpriteRendererComponent> _spriteRenderer = nullptr;
             std::shared_ptr<TextComponent> _textRenderer = nullptr;
         
         public:
-            int test = 0;
+            // Function pointers
+            std::function<void(int)> OnClickBegin = nullptr;
+            std::function<void(int)> OnClick = nullptr;
+            std::function<void(int)> OnClickEnd = nullptr;
+            std::function<void()> OnHoverBegin = nullptr;
+            std::function<void()> OnHover = nullptr;
+            std::function<void()> OnHoverEnd = nullptr;
+
             ~Button()
             {
-                UIManager::removeElement(uiID);
+                if (m_active) UIManager::removeElement(uiID);
             }
             /**
              * @brief Construct a new Button object
@@ -33,7 +42,7 @@ namespace Core
              * @param scale The scale of the button
              * @param id The id of the button
              */
-            Button(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale): Actor(r_stage, id, pos, scale)
+            Button(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale, std::shared_ptr<Actor> parent = nullptr): Actor(r_stage, id, pos, scale, parent)
             {
                 
             }
@@ -41,7 +50,6 @@ namespace Core
             void init() override
             {
                 Actor::init();
-                
                 uiID = UIManager::addElement(this);
             }
 
@@ -68,12 +76,28 @@ namespace Core
             }
 
             /**
+             * @brief The behaviour of the button when the click starts
+             * 
+             */
+            virtual void onClickBegin(int type) override
+            {
+                if (OnClickBegin) OnClickBegin(type);
+            }
+            /**
              * @brief The behaviour of the button when clicked upon
              * 
              */
-            virtual void onClick() override
+            virtual void onClick(int type) override
             {
-                std::cout << "button clicked!" << std::endl;
+                if (OnClick) OnClick(type);
+            }
+            /**
+             * @brief The behaviour of the button when the click ends
+             * 
+             */
+            virtual void onClickEnd(int type) override
+            {
+                if (OnClickEnd) OnClickEnd(type);
             }
             /**
              * @brief The behaviour of the button when the hover starts
@@ -81,7 +105,7 @@ namespace Core
              */
             virtual void onHoverBegin() override
             {
-                std::cout << "button hover begin!" << std::endl;
+                if (OnHoverBegin) OnHoverBegin();
             }
             /**
              * @brief The behaviour of the button when hovered on
@@ -89,7 +113,7 @@ namespace Core
              */
             virtual void onHover() override
             {
-                std::cout << "button hover!" << std::endl;
+                if (OnHover) OnHover();
             }
             /**
              * @brief The behaviour of the button when it stops being hovered
@@ -97,7 +121,7 @@ namespace Core
              */
             virtual void onHoverEnd() override
             {
-                std::cout << "button hover end!" << std::endl;
+                if (OnHoverEnd) OnHoverEnd();
             }
 
             /**

@@ -14,7 +14,6 @@ namespace Core
     class ColliderComponent : public BaseComponent
     {
         private:
-            TransformComponent &transform;
             std::string m_tag;
             
             bool m_isTrigger = false;
@@ -33,13 +32,25 @@ namespace Core
              * @brief Construct a new Collider Component object and its BoundingBox.
              * 
              * @param p_broadcaster The actor that implements the IBroadcaster interface
-             * @param p_transform The TransformComponent to reference
-             * @param vec2 The extents (wingspan) of the BoundingBox of this collider
+             * @param center The center point of the BoundingBox of this collider
+             * @param extents The extents (wingspan) of the BoundingBox of this collider
              * @param str The tag of this collider
              * @param isTrigger Is this collider trigger only?
              */
-            ColliderComponent(const BroadcasterInterface& p_broadcaster, TransformComponent& p_transform, Vector2 vec2, const std::string& str = "", bool isTrigger = false) : 
-            BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), vec2)
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, Vector2 center, Vector2 extents, const std::string& str = "", bool isTrigger = false) : 
+            BaseComponent(p_broadcaster), m_tag(str), m_isTrigger(isTrigger), m_aabb(center, extents)
+            {}
+            /**
+             * @brief Construct a new Collider Component object and its BoundingBox.
+             * 
+             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param p_transform The TransformComponent to reference
+             * @param extents The extents (wingspan) of the BoundingBox of this collider
+             * @param str The tag of this collider
+             * @param isTrigger Is this collider trigger only?
+             */
+            ColliderComponent(const BroadcasterInterface& p_broadcaster, TransformComponent& p_transform, Vector2 extents, const std::string& str = "", bool isTrigger = false) : 
+            BaseComponent(p_broadcaster), m_tag(str), m_isTrigger(isTrigger), m_aabb(p_transform.getPosition(), extents)
             {}
             /**
              * @brief Construct a new Collider Component object and its BoundingBox.
@@ -50,7 +61,7 @@ namespace Core
              * @param isTrigger Is this collider trigger only?
              */
             ColliderComponent(const BroadcasterInterface& p_broadcaster, TransformComponent& p_transform, const std::string& str = "", bool isTrigger = false) : 
-            BaseComponent(p_broadcaster), transform(p_transform), m_tag(str), m_isTrigger(isTrigger)
+            BaseComponent(p_broadcaster), m_tag(str), m_isTrigger(isTrigger)
             {
                 Vector2 extents(0, 0);
                 extents.add(p_transform.getScale());

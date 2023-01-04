@@ -13,11 +13,22 @@ namespace Core
     {
         public:
             virtual ~UserInterface(){};
+
+            /**
+             * @brief How the UI element when the click starts
+             * 
+             */
+            virtual void onClickBegin(int type) = 0;
             /**
              * @brief How the UI element should act upon being clicked on
              * 
              */
-            virtual void onClick() = 0;
+            virtual void onClick(int type) = 0;
+            /**
+             * @brief 
+             * 
+             */
+            virtual void onClickEnd(int type) = 0;
             /**
              * @brief How the UI element should act when the hover starts
              * 
@@ -59,17 +70,18 @@ namespace Core
             }
             inline static void removeElement(uint16_t index)
             {
-                s_uiElements.erase(index);
+                if (s_uiElements.find(index) != s_uiElements.end()) s_uiElements.erase(index);
             }
 
             inline static UserInterface *checkOverlapWithUI(const BoundingBox& mouseBox)
             {
-                for (auto pair : s_uiElements)
+                for (auto it = s_uiElements.rbegin(); it != s_uiElements.rend(); it++)
                 {
-                    auto element = pair.second;
+                    auto element = it->second;
 
                     auto col = element->getCollider();
                     if (!col) continue;
+                    if (!col->isActive()) continue;
 
                     if (Collision::AABB(mouseBox, col->getAABB())) 
                     {

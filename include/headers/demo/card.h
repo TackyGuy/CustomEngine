@@ -14,12 +14,18 @@ namespace Demo1
             std::shared_ptr<Sprite> _hoverSprite = nullptr;
             std::shared_ptr<Sprite> _faceSprite = nullptr;
 
+            std::shared_ptr<Actor> _voltorbDeduction = nullptr;
+            std::shared_ptr<Actor> _oneDeduction = nullptr;
+            std::shared_ptr<Actor> _twoDeduction = nullptr;
+            std::shared_ptr<Actor> _threeDeduction = nullptr;
+
             std::shared_ptr<AudioAsset> _sfx = nullptr;
             std::shared_ptr<AudioAsset> _flipSfx = nullptr;
             std::shared_ptr<AudioAsset> _selectSfx = nullptr;
 
             bool m_flipped = false;
             bool m_isBomb = false;
+            std::pair<int, int> m_cardIndex;
             uint16_t value;
         public:
             ~Card(){}
@@ -30,7 +36,7 @@ namespace Demo1
              * @param scale The scale of the button
              * @param id The id of the button
              */
-            Card(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale): Button(r_stage, id, pos, scale)
+            Card(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale, std::shared_ptr<Actor> parent = nullptr): Button(r_stage, id, pos, scale, parent)
             {
                 
             }
@@ -49,7 +55,7 @@ namespace Demo1
                 Actor::start();
             }
 
-            void setCard(std::shared_ptr<Sprite> faceSprite, std::shared_ptr<Sprite> backSprite, std::shared_ptr<Sprite> hoverSprite, std::shared_ptr<AudioAsset> sfx, int val)
+            void setCard(std::shared_ptr<Sprite> faceSprite, std::shared_ptr<Sprite> backSprite, std::shared_ptr<Sprite> hoverSprite, std::shared_ptr<AudioAsset> sfx, int val, int x, int y)
             {
                 _faceSprite = faceSprite;
                 _backSprite = backSprite;
@@ -59,6 +65,33 @@ namespace Demo1
 
                 value = val;
                 m_isBomb = (val == 4);
+
+                m_cardIndex = std::make_pair(x, y);
+            }
+
+            void createDeductions(std::shared_ptr<Sprite> voltorbSpr, std::shared_ptr<Sprite> oneSpr, std::shared_ptr<Sprite> twoSpr, std::shared_ptr<Sprite> threeSpr)
+            {
+                Vector2 size = Vector2(25, 25);
+                Vector2 pos = this->getComponent<TransformComponent>()->getPositionCentered() - Vector2(13, 13);
+
+                float offset = 20.0f;
+                _voltorbDeduction = ActorManager::createActor<Actor>(stage, pos + Vector2(-offset, -offset), size);
+                _voltorbDeduction->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, voltorbSpr));
+                _voltorbDeduction->setActive(false);
+
+                _oneDeduction = ActorManager::createActor<Actor>(stage, pos + Vector2(offset, -offset), size);
+                _oneDeduction->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, oneSpr));
+                _oneDeduction->setActive(false);
+
+
+                _twoDeduction = ActorManager::createActor<Actor>(stage, pos + Vector2(-offset, offset), size);
+                _twoDeduction->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, twoSpr));
+                _twoDeduction->setActive(false);
+
+                _threeDeduction = ActorManager::createActor<Actor>(stage, pos + Vector2(offset, offset), size);
+                _threeDeduction->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*this, threeSpr));
+                _threeDeduction->setActive(false);
+
             }
 
             void reveal()
@@ -67,6 +100,36 @@ namespace Demo1
                 
                 m_flipped = true;
                 _spriteRenderer->setSprite(_faceSprite);
+                _collider->setActive(false);
+                hideDeductions();
+            }
+
+            void toggleDeduction(int index)
+            {
+                if (m_flipped) return;
+
+                switch (index)
+                {
+                    case 3:
+                        _threeDeduction->setActive(!_threeDeduction->isActive());
+                        break;
+                    case 2:
+                        _twoDeduction->setActive(!_twoDeduction->isActive());
+                        break;
+                    case 1:
+                        _oneDeduction->setActive(!_oneDeduction->isActive());
+                        break;
+                    default:
+                        _voltorbDeduction->setActive(!_voltorbDeduction->isActive());
+                        break;
+                }
+            }
+            void hideDeductions()
+            {
+                _threeDeduction->setActive(false);
+                _twoDeduction->setActive(false);
+                _oneDeduction->setActive(false);
+                _voltorbDeduction->setActive(false);
             }
 
             uint16_t getValue()
@@ -76,25 +139,42 @@ namespace Demo1
 
             void update(double dt) override
             {
-                //
+                
             } 
 
             /**
-             * @brief We flip the card when it's clicked
+             * @brief We flip the card when it's clicked or show the Deductions
              * 
              */
-            void onClick() override
+            void onClick(int type) override
             {
-                if (!m_flipped)
+                switch (type)
                 {
-                    reveal();
-                    stage.getAudioMixer()->playSound(_sfx);
-                    if (m_isBomb) stage.sendMessage("gameOver");
-                    else
-                    {
-                        stage.sendMessage(std::to_string(value));
-                    }
+                    case 2:
+                        // 
+                        break;
+
+                    default:
+                        if (!m_flipped)
+                        {
+                            reveal();
+                            stage.getAudioMixer()->playSound(_sfx);
+                            if (m_isBomb) stage.sendMessage("gameOver");
+                            else
+                            {
+                                stage.sendMessage(std::to_string(value));
+                            }
+                        }
+                        break;
                 }
+            }
+            /**
+             * @brief We hide the Deductions
+             * 
+             */
+            void onClickEnd(int type) override
+            {
+
             }
             /**
              * @brief We change the sprite of the card when hovered
@@ -106,6 +186,12 @@ namespace Demo1
                 {
                     _spriteRenderer->setSprite(_hoverSprite);
                     stage.getAudioMixer()->playSound(_selectSfx);
+
+                    std::string str = "select_";
+                    str += std::to_string(m_cardIndex.first);
+                    str += "_";
+                    str += std::to_string(m_cardIndex.second);
+                    stage.sendMessage(str);
                 }
             }
             void onHover() override {}

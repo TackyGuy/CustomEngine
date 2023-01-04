@@ -26,33 +26,38 @@ namespace Core
         protected:
             Stage &stage;
             int m_id;
+            int m_active;
 
+            std::shared_ptr<Actor> _parent = nullptr;
+            std::vector<std::shared_ptr<Actor>> _children;
             std::unordered_map<std::size_t, std::shared_ptr<BaseComponent>> _components;
             std::shared_ptr<TransformComponent> _transform = nullptr;
 
         public:
             ~Actor()
-            {}
+            {
+                // std::cout << "baibai" << std::endl;
+            }
 
             /**
              * @brief Construct a new Actor object with a transform component
              * 
-             * @param pos Vector that represents the position of the actor
+             * @param pos Vector that holds  the position of this actor
+             * @param scale Vector that holds the scale of this actor
              * @param id Id of the actor
+             * @param parent (optional) Parent of this actor
              */
-            Actor(Stage &r_stage, const int id, const Vector2 pos)
-            : stage(r_stage), m_id(id)
+            Actor(Stage &r_stage, const int id, const Vector2 pos, const Vector2 scale, std::shared_ptr<Actor> parent = nullptr) : stage(r_stage), m_id(id)
             {
-                _transform = std::make_shared<TransformComponent>(*this, pos, Vector2(1, 1));
+                if (parent) _parent = parent;
+                _transform = std::make_shared<TransformComponent>(*this, pos, scale, (parent)?parent->getComponent<TransformComponent>() : nullptr);
             }
-            Actor(Stage &r_stage, const int id, const Vector2 pos, const Vector2 scale) : stage(r_stage), m_id(id)
-            {
-                _transform = std::make_shared<TransformComponent>(*this, pos, scale);
-            }
+            Actor(const Actor& other) = default;
+            Actor(Actor&& other) = default;
             
 
             // Returns the id of this actor
-            int getID();
+            const int getID() const;
 
             virtual void init();
 
@@ -98,6 +103,7 @@ namespace Core
                 }
                 // else std::cout << "Adding new component..." << std::endl;
                 auto component = std::make_shared<T>(std::forward<T>(cmpt));
+                component->setActive(true);
                 _components.emplace(T::Type, component);
             }
             /**
@@ -139,8 +145,14 @@ namespace Core
 
             // Getters and setters
             #pragma region 
-            void setParent(Actor* parent);
-            Actor* getParent();
+            void setActive(bool value);
+            const bool isActive() const;
+            void setParent(std::shared_ptr<Actor> parent);
+            std::shared_ptr<Actor> getParent();
+            void attachChild(std::shared_ptr<Actor> child);
+            std::shared_ptr<Actor> getChild(uint32_t index);
+            std::vector<std::shared_ptr<Actor>> getChildren();
+            const int getChildrenCount() const;
 
             #pragma endregion
 

@@ -41,7 +41,7 @@ namespace Core
             {
                 for (auto actor : ActorManager::s_actors)
                 {
-                    actor->start();
+                    actor.second->start();
                 }
             }
             /**
@@ -51,10 +51,13 @@ namespace Core
              */
             virtual void update(double dt)
             {
+                ActorManager::updateActiveActors();
+
                 m_elapsedTime += dt;
-                for (auto actor : ActorManager::s_actors)
+                for (auto it : ActorManager::s_activeActors)
                 {
-                    actor->update(dt);
+                    auto actor = it.second.lock();
+                    if (actor) actor->update(dt);
                 }
             }
 

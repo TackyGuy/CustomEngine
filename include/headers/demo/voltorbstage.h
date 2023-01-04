@@ -22,6 +22,8 @@ namespace Demo1
             const int CARDS_PER_ROW = 5;
             const int CARDS_PER_COLUMN = 5;
             std::array<std::array<std::shared_ptr<Card>, 5>, 5> cardsArray;
+            std::shared_ptr<Card> selectedCard = nullptr;
+            std::shared_ptr<Actor> _deductionWheel = nullptr;
 
             SDL_Color colorBlack = {0, 0, 0};
         public:
@@ -73,8 +75,9 @@ namespace Demo1
                 _table.emplace_back(backgroundProp);
 
                 m_requiredScore = 1;
-
                 placeCards();
+
+                createDeductionWheel();
             }
 
             void placeCards()
@@ -128,8 +131,16 @@ namespace Demo1
                             spritesheet->getSpriteAt(spriteOffset), 
                             spritesheet->getSpriteAt(21),
                             Loader::getAsset<AudioAsset>(sfxName),
-                            cardIndex
+                            cardIndex,
+                            x,
+                            y
                             );
+                        card->createDeductions(
+                            spritesheet->getSpriteAt(44),
+                            spritesheet->getSpriteAt(45),
+                            spritesheet->getSpriteAt(46),
+                            spritesheet->getSpriteAt(47)
+                        );
 
                         cardsArray[x].at(y) = card;
                         _table.emplace_back(card);
@@ -189,10 +200,63 @@ namespace Demo1
 
             }
 
+            void createDeductionWheel()
+            {
+                _deductionWheel = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(1, 1));
+                int offset = 25;
+                auto voltorbButton = createDeductionButton(Vector2(-offset, -offset), Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(44), 0);
+                auto oneButton = createDeductionButton(Vector2(offset, -offset), Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(45), 1);
+                auto twoButton = createDeductionButton(Vector2(-offset, offset), Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(46), 2);
+                auto threeButton = createDeductionButton(Vector2(offset, offset), Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(47), 3);
+            }
+
+            std::shared_ptr<Button> createDeductionButton(Vector2 pos, std::shared_ptr<Sprite> sprite, int val)
+            {
+                std::shared_ptr<Button> button = nullptr;
+
+                button = ActorManager::createActor<Button>(*this, Vector2(), Vector2(56, 56), _deductionWheel);
+                _deductionWheel->attachChild(button);
+                auto transform = button->getComponent<TransformComponent>();
+                transform->setLocalPosition(pos);
+                button->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*button, sprite));
+                // button->addComponent<ColliderComponent>(ColliderComponent(*button, *transform, "ui", true));
+                button->addComponent<ColliderComponent>(ColliderComponent(*button, transform->getPositionCentered(), transform->getScale() * 0.3f, "ui", true));
+                button->setupButton(button->getComponent<ColliderComponent>(), button->getComponent<SpriteRendererComponent>(), nullptr);
+
+                auto temp = &selectedCard;
+                button->OnClickEnd = ([=](int type)
+                {
+                    if (type == 2 && temp) 
+                    {
+                        auto sharedPtr = (*temp);
+                        if (sharedPtr) sharedPtr->toggleDeduction(val);
+                    }
+                });
+
+                return button;
+            }
+
             void update(double dt) override
             {
                 if (!m_gameOver)
                 {
+                    // cardsArray[0].at(1)->reveal();
+                    if (_inputProvider->isMouseButtonPressed(2))
+                    {
+                        if (!_deductionWheel->isActive()) 
+                        {
+                            _deductionWheel->setActive(true);
+                            _deductionWheel->getComponent<TransformComponent>()->setPosition(_inputProvider->getMousePosition() + Vector2(-25, -25));
+                            for (auto child : _deductionWheel->getChildren())
+                            {
+                                child->getComponent<ColliderComponent>()->getAABB().setCenter(child->getComponent<TransformComponent>()->getPositionCentered());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_deductionWheel->isActive()) _deductionWheel->setActive(false);
+                    }
                     Stage::update(dt);
                 }
                 else
@@ -207,6 +271,13 @@ namespace Demo1
                 {
                     m_gameOver = true;
                     std::cout << "Game Over!" << std::endl;
+                }
+                else if (msg.find("select_") != std::string::npos)
+                {
+                    auto x = std::stoi(msg.substr(7, 1));
+                    auto y = std::stoi(msg.substr(9, 1));
+
+                    selectedCard = cardsArray[x].at(y);
                 }
                 else
                 {
@@ -223,7 +294,7 @@ namespace Demo1
                 {
                     for (auto card : arr) card->reveal();
                 }
-                return;
+                // return; 
                 // TODO Wait for input before continuing
                 for (int i = 0; i < _table.size(); i++)
                 {
@@ -237,7 +308,7 @@ namespace Demo1
                 m_gameOver = false;
 
                 // TODO find why this is crashing
-                // createTable();
+                createTable();
             }
     };
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "actor.h"
 
 namespace Core
@@ -10,7 +12,9 @@ namespace Core
 
         public:
             // A vector holding pointers to all the valid Actors.
-            inline static std::vector<std::shared_ptr<Actor>> s_actors;
+            // TODO understand why the rendering works with map but not unordered_map
+            inline static std::map<int, std::shared_ptr<Actor>> s_actors;
+            inline static std::map<int, std::weak_ptr<Actor>> s_activeActors;
 
             /**
              * @brief Create an Actor object of type T at the specified position and
@@ -22,13 +26,14 @@ namespace Core
              * @return T* A pointer of type T pointing to the new Actor object.
              */
             template <class T>
-            static std::shared_ptr<T> createActor(Stage &stage, const Vector2& pos, const Vector2& scale)
+            static std::shared_ptr<T> createActor(Stage &stage, const Vector2& pos, const Vector2& scale, const std::shared_ptr<Actor> parent = nullptr)
             {
-                std::shared_ptr<T> newActor = std::make_shared<T>(T(stage, s_actors.size(), pos, scale));
+                auto newActor = std::make_shared<T>(T(stage, s_actors.size(), pos, scale, parent));
+                newActor->setActive(true);
                 newActor->init();
-
+                
+                // std::cout << "Actor(" << s_actors.size() << ") created" << std::endl;
                 registerActor(newActor);
-                // std::cout << "Actor created" << std::endl;
 
                 return newActor;
             }
@@ -37,12 +42,14 @@ namespace Core
              * 
              * @param a The Actor object to register
              */
-            static void registerActor(std::shared_ptr<Actor> a);
+            static void registerActor(const std::shared_ptr<Actor> actor);
             /**
              * @brief Unregister and delete the specified Actor object.
              * 
              * @param actor The Actor object to delete.
              */
             static void deleteActor(Actor actor);
+
+            static void updateActiveActors();
     };
 }

@@ -109,20 +109,19 @@ void Game::render()
 {
     m_window->clear();
 
-    for (std::weak_ptr<Actor> weakPtr : ActorManager::s_actors)
+    for (auto const& it : ActorManager::s_activeActors)
     {
-        auto actor = weakPtr.lock();
+        auto actor = it.second.lock();
         if (actor) actor->render(m_window.get());
-        
     }
     m_window->display();
 }
 
 void Game::handleCollisions()
 {
-    for (std::weak_ptr<Actor> weakPtr : ActorManager::s_actors)
+    for (auto const& it : ActorManager::s_activeActors)
     {
-        auto actor = weakPtr.lock();
+        auto actor = it.second.lock();
         if (!actor) return;
 
         auto rb = actor->getComponent<RigidbodyComponent>();
