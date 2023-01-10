@@ -18,17 +18,17 @@ namespace Core
 
             void resolveCollision();
         public:
+            static const size_t Type;
+            const size_t getType() const override
+            {
+                return Type;
+            }
             enum Body
             {
                 STATIC,
                 DYNAMIC
             };
             Body bodyType;
-            static const size_t Type;
-            const size_t getType() const override
-            {
-                return Type;
-            }
 
             ~RigidbodyComponent(){}
             /**

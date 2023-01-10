@@ -36,7 +36,7 @@ namespace Core
         public:
             ~Actor()
             {
-                // std::cout << "baibai" << std::endl;
+
             }
 
             /**
@@ -85,7 +85,6 @@ namespace Core
                 }
                 
             }
-            // virtual void OnDelete();
             
             /**
              * @brief Attaches a component to the actor and adds it to the _components unordered map.

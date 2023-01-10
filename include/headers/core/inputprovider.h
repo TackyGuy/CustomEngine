@@ -30,10 +30,10 @@ namespace Core
                 delete _currentHovered;
                 _currentHovered = nullptr;
             }
-            InputProvider()
-            {}
+            InputProvider(){}
 
             void initialize();
+            void reset();
             void handleInputs();
             void handleKeyboard();
             void handleMouse();

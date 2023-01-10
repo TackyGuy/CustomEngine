@@ -9,25 +9,31 @@ void ActorManager::registerActor(const std::shared_ptr<Actor> actor)
 
 void ActorManager::deleteActor(Actor actor)
 {
-    s_actors.erase(actor.getID());
     if (actor.isActive()) s_activeActors.erase(actor.getID());
+    s_actors[actor.getID()] = nullptr;
 }
 
 
 void ActorManager::updateActiveActors()
 {
-    for (auto iterator : s_actors)
+    for (auto it = s_actors.cbegin(); it != s_actors.cend();)
     {
-        auto actor = iterator.second;
-        bool active = actor->isActive();
-
-        if (s_activeActors.find(iterator.first) == s_activeActors.end())
-        {
-            if (active) s_activeActors.emplace(iterator.first, iterator.second);
-        }
+        if (!(it->second)) s_actors.erase(it++);
         else 
         {
-            if (!active) s_activeActors.erase(iterator.first);
+            auto actor = it->second;
+
+            bool active = actor->isActive();
+
+            if (s_activeActors.find(it->first) == s_activeActors.end())
+            {
+                if (active) s_activeActors.emplace(it->first, it->second);
+            }
+            else 
+            {
+                if (!active) s_activeActors.erase(it->first);
+            }
+            ++it;
         }
     }
 }

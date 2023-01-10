@@ -1,7 +1,7 @@
 #include "textcomponent.h"
 using namespace Core;
 
-const size_t TextComponent::Type = std::hash<std::string>{}("Text");
+const size_t TextComponent::Type = std::hash<std::string>{}("TextRenderer");
 
 void TextComponent::createSurface()
 {

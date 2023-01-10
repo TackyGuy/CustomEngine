@@ -23,7 +23,7 @@ namespace Sandbox
             std::vector<Actor*> tiles;
             std::shared_ptr<Actor> backgroundProp = nullptr;
         public: 
-            ~SandboxStage(){};
+            ~SandboxStage(){}
             SandboxStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
 
             void preload() override
@@ -38,7 +38,7 @@ namespace Sandbox
                 Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3", true));
             }
 
-            void init() override
+            void start() override
             {
                 std::cout << "initializing test stage" << std::endl;
 
@@ -153,7 +153,7 @@ namespace Sandbox
                 _audioMixer->setMusicVolume(3);
                 _audioMixer->playMusic(Loader::getAsset<AudioAsset>("music"));
 
-                Stage::init();
+                Stage::start();
             }
 
             void setUI()

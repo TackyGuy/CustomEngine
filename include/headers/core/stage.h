@@ -21,7 +21,8 @@ namespace Core
 
             Vector2 center() const;
         public:
-            virtual ~Stage(){};
+            virtual ~Stage(){}
+
             Stage(int width, int height, int size, std::shared_ptr<AudioMixer> mixer) : stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
             {
                 _inputProvider = std::make_shared<InputProvider>(InputProvider());
@@ -37,11 +38,11 @@ namespace Core
              * @brief Initialize the stage and instantiate the actors here.
              * 
              */
-            virtual void init()
+            virtual void start()
             {
                 for (auto actor : ActorManager::s_actors)
                 {
-                    actor.second->start();
+                    if (actor.second) actor.second->start();
                 }
             }
             /**

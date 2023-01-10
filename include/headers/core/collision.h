@@ -80,6 +80,9 @@ namespace Core
     class Collision
     {
         private:
+            ~Collision(){};
+            Collision(){};
+
             inline static std::map<int, std::shared_ptr<ColliderComponent>> _colliders;
             inline static std::vector<Node*> dirtyNodes;
 

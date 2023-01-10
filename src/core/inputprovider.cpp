@@ -8,6 +8,10 @@ void InputProvider::initialize()
     // Copy the Keyboard state
     _currentInput = const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
 }
+void InputProvider::reset()
+{
+    _currentHovered = nullptr;
+}
 void InputProvider::handleInputs()
 {
     SDL_PumpEvents();
@@ -55,7 +59,10 @@ void InputProvider::handleEventsUI()
 
     if (_currentHovered != touchedElement) 
     {
-        if (_currentHovered) _currentHovered->onHoverEnd();
+        if (_currentHovered) 
+        {
+            _currentHovered->onHoverEnd();
+        }
     }
 
     _currentHovered = touchedElement;

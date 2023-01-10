@@ -16,7 +16,7 @@ namespace Core
             ~FontAsset()
             {
                 TTF_CloseFont(_font);
-            };
+            }
 
             /**
              * @brief Construct a new Font Asset object.

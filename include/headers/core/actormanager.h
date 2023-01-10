@@ -11,9 +11,8 @@ namespace Core
         private:
 
         public:
-            // A vector holding pointers to all the valid Actors.
-            // TODO understand why the rendering works with map but not unordered_map
-            inline static std::map<int, std::shared_ptr<Actor>> s_actors;
+            inline static std::unordered_map<int, std::shared_ptr<Actor>> s_actors;
+            // Has to be ordered so all the elements are rendered
             inline static std::map<int, std::weak_ptr<Actor>> s_activeActors;
 
             /**

@@ -31,7 +31,7 @@ namespace Core
             std::function<void()> OnHover = nullptr;
             std::function<void()> OnHoverEnd = nullptr;
 
-            ~Button()
+            virtual ~Button()
             {
                 if (m_active) UIManager::removeElement(uiID);
             }

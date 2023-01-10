@@ -21,13 +21,14 @@ namespace Core
             static const size_t SpritesheetType;
             static const size_t FontAssetType;
             static const size_t AudioAssetType;
+
+            virtual ~Asset(){}
             /**
              * @brief Construct a new Asset object.
              * 
              * @param path The path of where this asset is stored
              */
             Asset(const char* path):_textPath(path){}
-            virtual ~Asset() = default;
 
             /**
              * @brief Set the m_loaded boolean to the designated value.

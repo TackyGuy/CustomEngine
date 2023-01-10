@@ -17,27 +17,24 @@ namespace Core
         private:
             bool m_active;
         protected:
-           const BroadcasterInterface& broadcaster;
-        public:
-            static const size_t Type;
+            const BroadcasterInterface& broadcaster;
 
+            virtual ~BaseComponent(){}
             /**
              * @brief Construct a new Base Component object.
              * 
              * @param broadcaster A reference to the actor that holds the component
              */
-            BaseComponent(const BroadcasterInterface& p_broadcaster) : broadcaster(p_broadcaster)
-            {}
-            virtual ~BaseComponent() = default;
-
+            BaseComponent(const BroadcasterInterface& p_broadcaster) : broadcaster(p_broadcaster){}
+        public:
+            static const size_t Type;
             /**
              * @brief Updates the component.
              * 
              * @param dt DeltaTime as a double
              * @param stage A reference to the current stage
              */
-            virtual void update(double dt, Stage& stage)
-            {}
+            virtual void update(double dt, Stage& stage){}
 
             virtual const size_t getType() const = 0;
             

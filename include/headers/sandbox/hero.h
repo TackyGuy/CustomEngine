@@ -24,7 +24,7 @@ namespace Sandbox
         private:
             HeroStates currentState;
         public:
-            ~Hero(){}
+            ~Hero(){};
             Hero(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale, std::shared_ptr<Actor> parent = nullptr)
             : Actor(r_stage, id, pos, scale){}
 

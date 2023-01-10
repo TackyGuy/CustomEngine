@@ -19,7 +19,7 @@ namespace Core
                 return Type;
             }
             
-            virtual ~InputComponent() = default;
+            virtual ~InputComponent(){}
             /**
              * @brief Construct a new InputComponent object.
              * 

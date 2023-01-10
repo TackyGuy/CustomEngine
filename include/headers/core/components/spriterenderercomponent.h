@@ -18,11 +18,15 @@ namespace Core
     {
         private:
             std::shared_ptr<Sprite> _sprite = nullptr;
-            SDL_Rect m_rect;
+            SDL_Rect m_rect{0, 0, 0, 0};
             bool m_flipX = false;
 
         public:
             static const size_t Type;
+            const size_t getType() const override
+            {
+                return Type;
+            }
 
             ~SpriteRendererComponent(){}
             /**
@@ -73,6 +77,7 @@ namespace Core
             void render(SDL_Renderer *renderer, const Vector2& pos, const Vector2& size) override
             {
                 if (!renderer) return;
+                if (!_sprite) return;
                 
                 SDL_Rect src = 
                 {

@@ -21,8 +21,8 @@ namespace Core
                 SDL_DestroyRenderer(_renderer);
                 SDL_DestroyWindow(_window);
             }
-            RenderWindow()
-            {}
+            RenderWindow(){};
+            
             RenderWindow(const char* title, int x, int y, int width, int height)
             {
                 _window = SDL_CreateWindow(title, x, y, width, height, SDL_WINDOW_SHOWN);

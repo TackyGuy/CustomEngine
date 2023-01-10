@@ -12,7 +12,7 @@ namespace Core
     class UserInterface
     {
         public:
-            virtual ~UserInterface(){};
+            virtual ~UserInterface(){}
 
             /**
              * @brief How the UI element when the click starts

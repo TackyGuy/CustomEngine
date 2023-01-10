@@ -35,3 +35,8 @@ void AudioMixer::togglePlay()
     if (Mix_PausedMusic()) Mix_ResumeMusic();
     else Mix_PauseMusic();
 }
+
+const bool AudioMixer::isPlaying() const
+{
+    return (bool)Mix_PlayingMusic();
+}

@@ -38,7 +38,7 @@ namespace Demo1
              */
             Card(Stage &r_stage, const int id, const Vector2& pos, const Vector2& scale, std::shared_ptr<Actor> parent = nullptr): Button(r_stage, id, pos, scale, parent)
             {
-                
+                //
             }
 
             void start() override

@@ -79,7 +79,7 @@ std::shared_ptr<Sprite> SpritesheetAsset::getSpriteAt(const uint16_t& index)
         return _sprites.at(index);
     else 
     {
-        std::cout << "The index: '" << index << "' is invalid" << std::endl;
+        std::cout << "The sprite at index: '" << index << "' is invalid" << std::endl;
         return nullptr;
     }
 }

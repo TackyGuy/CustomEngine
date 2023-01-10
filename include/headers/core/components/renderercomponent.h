@@ -17,7 +17,7 @@ namespace Core
                 return Type;
             }
 
-            ~RendererComponent(){}
+            virtual ~RendererComponent(){}
             /**
              * @brief Construct a new Renderer Component object.
              * 

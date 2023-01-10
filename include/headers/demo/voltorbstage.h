@@ -14,6 +14,7 @@ namespace Demo1
     class VoltorbStage: public Stage
     {
         private:
+            bool m_test = false;
             bool m_gameOver = false;
             uint16_t m_currentScore;
             uint16_t m_requiredScore;
@@ -21,17 +22,15 @@ namespace Demo1
             std::vector<std::shared_ptr<Actor>> _table;
             const int CARDS_PER_ROW = 5;
             const int CARDS_PER_COLUMN = 5;
-            std::array<std::array<std::shared_ptr<Card>, 5>, 5> cardsArray;
-            std::shared_ptr<Card> selectedCard = nullptr;
+            std::array<std::array<std::shared_ptr<Card>, 5>, 5> _cardsArray;
+            std::shared_ptr<Card> _selectedCard = nullptr;
             std::shared_ptr<Actor> _deductionWheel = nullptr;
 
             SDL_Color colorBlack = {0, 0, 0};
         public:
-            ~VoltorbStage()
-            {
+            ~VoltorbStage(){}
 
-            }
-            VoltorbStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
+            VoltorbStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){}
 
             void preload() override
             {
@@ -51,25 +50,26 @@ namespace Demo1
                 Loader::loadAsset("fontLarge", new FontAsset("res/fonts/weiholmir_regular.ttf", 18));
             }
 
-            void init() override
+            void start() override
             {
                 std::cout << "Welcome to Voltorb Flip!" << std::endl;
-
-                createTable();
-                // auto test = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(55, 55));
-                // test->addComponent<TextComponent>(TextComponent(*test, "HELLO???", SDL_Color{255, 255, 255}, Loader::getAsset<FontAsset>("fontLarge")));
-
 
                 _audioMixer->setMusicVolume(2);
                 _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain"));
                 _audioMixer->setSoundVolume(1);
 
                 m_currentScore = 1;
-                Stage::init();
+
+                createTable();
+                // auto test = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(55, 55));
+                // test->addComponent<TextComponent>(TextComponent(*test, "HELLO???", SDL_Color{255, 255, 255}, Loader::getAsset<FontAsset>("fontLarge")));
+                
+                Stage::start();
             }
 
             void createTable()
             {
+                std::cout << "Create table..." << std::endl;
                 auto backgroundProp = ActorManager::createActor<Actor>(*this, Vector2(0, 0), Vector2(stageWidth * tileSize, stageHeight * tileSize));
                 backgroundProp->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*backgroundProp, Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(0)));
                 _table.emplace_back(backgroundProp);
@@ -78,6 +78,8 @@ namespace Demo1
                 placeCards();
 
                 createDeductionWheel();
+
+                if (!_audioMixer->isPlaying()) _audioMixer->togglePlay();
             }
 
             void placeCards()
@@ -142,7 +144,7 @@ namespace Demo1
                             spritesheet->getSpriteAt(47)
                         );
 
-                        cardsArray[x].at(y) = card;
+                        _cardsArray[x].at(y) = card;
                         _table.emplace_back(card);
                     }
                 }
@@ -158,7 +160,7 @@ namespace Demo1
                     int totalVoltorbs = 0;
                     for (int j = 0; j < CARDS_PER_COLUMN; j++)
                     {
-                        int cardValue = cardsArray[i].at(j)->getValue();
+                        int cardValue = _cardsArray[i].at(j)->getValue();
                         if (cardValue == 4) totalVoltorbs++;
                         else totalNums += cardValue;
                     }
@@ -172,7 +174,7 @@ namespace Demo1
                     int totalVoltorbs = 0;
                     for (int j = 0; j < CARDS_PER_ROW; j++)
                     {
-                        int cardValue = cardsArray[j].at(i)->getValue();
+                        int cardValue = _cardsArray[j].at(i)->getValue();
                         if (cardValue == 4) totalVoltorbs++;
                         else totalNums += cardValue;
                     }
@@ -202,6 +204,8 @@ namespace Demo1
 
             void createDeductionWheel()
             {
+                if (_deductionWheel) return;
+
                 _deductionWheel = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(1, 1));
                 int offset = 25;
                 auto voltorbButton = createDeductionButton(Vector2(-offset, -offset), Loader::getAsset<SpritesheetAsset>("spritesheet")->getSpriteAt(44), 0);
@@ -223,7 +227,7 @@ namespace Demo1
                 button->addComponent<ColliderComponent>(ColliderComponent(*button, transform->getPositionCentered(), transform->getScale() * 0.3f, "ui", true));
                 button->setupButton(button->getComponent<ColliderComponent>(), button->getComponent<SpriteRendererComponent>(), nullptr);
 
-                auto temp = &selectedCard;
+                auto temp = &_selectedCard;
                 button->OnClickEnd = ([=](int type)
                 {
                     if (type == 2 && temp) 
@@ -240,7 +244,8 @@ namespace Demo1
             {
                 if (!m_gameOver)
                 {
-                    // cardsArray[0].at(1)->reveal();
+                    if (_inputProvider->isKeyPressed(SDL_SCANCODE_7)) m_gameOver = true;
+
                     if (_inputProvider->isMouseButtonPressed(2))
                     {
                         if (!_deductionWheel->isActive()) 
@@ -259,10 +264,7 @@ namespace Demo1
                     }
                     Stage::update(dt);
                 }
-                else
-                {
-                    resetTable();
-                }
+                else resetTable();
             }
 
             void sendMessage(std::string msg) override
@@ -277,7 +279,7 @@ namespace Demo1
                     auto x = std::stoi(msg.substr(7, 1));
                     auto y = std::stoi(msg.substr(9, 1));
 
-                    selectedCard = cardsArray[x].at(y);
+                    _selectedCard = _cardsArray[x].at(y);
                 }
                 else
                 {
@@ -289,26 +291,34 @@ namespace Demo1
 
             void resetTable()
             {
-                // std::vector<Actor*> temp = _table;
-                for (auto arr : cardsArray)
+                _selectedCard = nullptr;
+                
+                for (auto arr : _cardsArray)
                 {
-                    for (auto card : arr) card->reveal();
+                    for (auto card : arr) 
+                    {
+                        card->reveal();
+                        card = nullptr;
+                    }
                 }
-                // return; 
                 // TODO Wait for input before continuing
-                for (int i = 0; i < _table.size(); i++)
+                for (auto &it : _table)
                 {
-                    ActorManager::deleteActor(*_table[i]);
-                    _table[i].reset();
+                    Collision::removeCollider(it->getID());
+                    ActorManager::deleteActor(*it);
+                    it = nullptr;
                 }
 
                 _table.clear();
+                m_test = true;
 
                 m_currentScore = 0;
-                m_gameOver = false;
-
-                // TODO find why this is crashing
                 createTable();
+                _inputProvider->reset();
+                Stage::start();
+
+                m_gameOver = false;
+                // _audioMixer->togglePlay();
             }
     };
 }

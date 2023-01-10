@@ -323,7 +323,7 @@ void Collision::addCollider(int id, std::shared_ptr<ColliderComponent> col)
 }
 void Collision::removeCollider(int id)
 {
-    _colliders.erase(id);
+    if (_colliders.find(id) != _colliders.end()) _colliders.erase(id);
 }
 
 bool Collision::findCollider(int id)

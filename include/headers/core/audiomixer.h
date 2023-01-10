@@ -14,8 +14,7 @@ namespace Core
             uint16_t m_soundVolume = 0;
             std::shared_ptr<AudioAsset> _currentMusic = nullptr;
         public:
-            ~AudioMixer()
-            {}
+            ~AudioMixer(){};
             /**
              * @brief Construct a new Audio Mixer object
              * 
@@ -69,6 +68,12 @@ namespace Core
              * 
              */
             void togglePlay();
+
+            /**
+             * @brief Check if the mixer is currently playing
+             * 
+             */
+            const bool isPlaying() const;
 
 
     };

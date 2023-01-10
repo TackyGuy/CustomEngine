@@ -67,7 +67,7 @@ void Game::init(const char* title, int x, int y)
 
 void Game::update()
 {
-    m_stage->init();
+    m_stage->start();
     while (m_GameState != GameState::QUIT)
     {
         // Current time
@@ -112,7 +112,9 @@ void Game::render()
     for (auto const& it : ActorManager::s_activeActors)
     {
         auto actor = it.second.lock();
-        if (actor) actor->render(m_window.get());
+        if (!actor) return;
+        
+        actor->render(m_window.get());
     }
     m_window->display();
 }

@@ -27,7 +27,7 @@ namespace Core
                 return Type;
             }
 
-            ~ColliderComponent(){};
+            ~ColliderComponent(){}
             /**
              * @brief Construct a new Collider Component object and its BoundingBox.
              * 
