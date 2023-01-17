@@ -33,7 +33,7 @@ namespace Core
 
             virtual ~Button()
             {
-                if (m_active) UIManager::removeElement(uiID);
+                if (uiID > -1) UIManager::removeElement(uiID);
             }
             /**
              * @brief Construct a new Button object

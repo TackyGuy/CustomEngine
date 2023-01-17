@@ -52,13 +52,18 @@ namespace Core
              */
             virtual void update(double dt)
             {
-                ActorManager::updateActiveActors();
+                ActorManager::updateActorMap();
 
                 m_elapsedTime += dt;
                 for (auto it : ActorManager::s_activeActors)
                 {
                     auto actor = it.second.lock();
-                    if (actor) actor->update(dt);
+                    if (actor) 
+                    {
+                        if (actor->isReady()) actor->update(dt);
+                        else actor->start();
+                        
+                    }
                 }
             }
 

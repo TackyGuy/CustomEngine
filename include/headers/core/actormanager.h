@@ -49,6 +49,7 @@ namespace Core
              */
             static void deleteActor(Actor actor);
 
+            static void updateActorMap();
             static void updateActiveActors();
     };
 }

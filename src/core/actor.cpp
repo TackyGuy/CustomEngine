@@ -1,6 +1,11 @@
 #include "actor.h"
 using namespace Core;
 
+const bool Actor::isReady() const
+{
+    return m_ready;
+}
+
 void Actor::setActive(bool value)
 {
     m_active = value;
@@ -23,11 +28,6 @@ void Actor::setActive(bool value)
 const bool Actor::isActive() const
 {
     return m_active;
-}
-
-void Actor::init()
-{
-    this->addComponent<TransformComponent>(_transform);
 }
 
 const int Actor::getID() const

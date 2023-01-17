@@ -13,8 +13,7 @@ void ActorManager::deleteActor(Actor actor)
     s_actors[actor.getID()] = nullptr;
 }
 
-
-void ActorManager::updateActiveActors()
+void ActorManager::updateActorMap()
 {
     for (auto it = s_actors.cbegin(); it != s_actors.cend();)
     {
@@ -33,6 +32,7 @@ void ActorManager::updateActiveActors()
             {
                 if (!active) s_activeActors.erase(it->first);
             }
+            
             ++it;
         }
     }

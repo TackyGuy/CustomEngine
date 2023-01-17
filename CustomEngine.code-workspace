@@ -62,7 +62,18 @@
 			"xloctime": "cpp",
 			"algorithm": "cpp",
 			"random": "cpp",
-			"functional": "cpp"
+			"functional": "cpp",
+			"chrono": "cpp",
+			"charconv": "cpp",
+			"format": "cpp",
+			"forward_list": "cpp",
+			"locale": "cpp",
+			"optional": "cpp",
+			"ratio": "cpp",
+			"stop_token": "cpp",
+			"thread": "cpp",
+			"xlocbuf": "cpp",
+			"xlocmes": "cpp"
 		}
 	}
 }

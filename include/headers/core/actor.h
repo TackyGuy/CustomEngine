@@ -26,7 +26,8 @@ namespace Core
         protected:
             Stage &stage;
             int m_id;
-            int m_active;
+            bool m_active;
+            bool m_ready;
 
             std::shared_ptr<Actor> _parent = nullptr;
             std::vector<std::shared_ptr<Actor>> _children;
@@ -36,7 +37,10 @@ namespace Core
         public:
             ~Actor()
             {
-
+                for (auto &child : _children)
+                {
+                    child->setParent(nullptr);
+                }
             }
 
             /**
@@ -59,11 +63,14 @@ namespace Core
             // Returns the id of this actor
             const int getID() const;
 
-            virtual void init();
+            virtual void init()
+            {
+                this->addComponent<TransformComponent>(_transform);
+            }
 
             virtual void start()
             {
-                
+                m_ready = true;
             }
             virtual void update(double dt)
             {
@@ -144,6 +151,7 @@ namespace Core
 
             // Getters and setters
             #pragma region 
+            const bool isReady() const;
             void setActive(bool value);
             const bool isActive() const;
             void setParent(std::shared_ptr<Actor> parent);

@@ -2,6 +2,7 @@
 
 #include "button.h"
 #include "loader.h"
+#include "actormanager.h"
 #include "audioasset.h"
 
 using namespace Core;
@@ -28,7 +29,13 @@ namespace Demo1
             std::pair<int, int> m_cardIndex;
             uint16_t value;
         public:
-            ~Card(){}
+            ~Card()
+            {
+                if (_voltorbDeduction) ActorManager::deleteActor(*_voltorbDeduction);
+                if (_oneDeduction) ActorManager::deleteActor(*_oneDeduction);
+                if (_twoDeduction) ActorManager::deleteActor(*_twoDeduction);
+                if (_threeDeduction) ActorManager::deleteActor(*_threeDeduction);
+            }
             /**
              * @brief Construct a new Button object
              * 
