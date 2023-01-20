@@ -74,8 +74,23 @@ namespace Core
              */
             virtual void sendMessage(std::string msg) = 0;
 
+            /**
+             * @brief Get a shared_ptr to the InputProvider
+             * 
+             * @return std::shared_ptr<InputProvider> 
+             */
             std::shared_ptr<InputProvider> getInputProvider();
+            /**
+             * @brief Get a shared_ptr to the AudioMixer
+             * 
+             * @return std::shared_ptr<AudioMixer> 
+             */
             std::shared_ptr<AudioMixer> getAudioMixer();
+            /**
+             * @brief Get the current time in the stage
+             * 
+             * @return const double 
+             */
             const double getTime() const;
     };
 }

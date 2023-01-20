@@ -7,6 +7,7 @@
 
 #include "stage.h"
 #include "card.h"
+#include "mutebutton.h"
 
 using namespace Core;
 namespace Demo1
@@ -28,6 +29,7 @@ namespace Demo1
             std::shared_ptr<Actor> _deductionWheel = nullptr;
             std::shared_ptr<Actor> _textCurrentScore = nullptr;
             std::shared_ptr<Actor> _textShadow = nullptr;
+            std::shared_ptr<MuteButton> _muteButton = nullptr;
 
             SDL_Color colorBlack = {0, 0, 0};
         public:
@@ -38,9 +40,10 @@ namespace Demo1
             void preload() override
             {
                 Loader::loadAsset("spritesheet", new SpritesheetAsset("res/sprites/demo/spritesheet.png", 28, 28));
+                Loader::loadAsset("uisheet", new SpritesheetAsset("res/sprites/user_interface/buttons.png", 16, 16));
 
                 Loader::loadAsset("musicMain", new AudioAsset("res/sounds/gameCorner.mp3", true));
-                Loader::loadAsset("musicSlots", new AudioAsset("res/sounds/slotsWin.mp3", true));
+                Loader::loadAsset("musicEnd", new AudioAsset("res/sounds/pokeLullaby.mp3", true));
                 Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/demo/click.wav", false));
                 Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/demo/select.wav", false));
                 Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/demo/card1.wav", false));
@@ -64,8 +67,6 @@ namespace Demo1
                 m_currentScore = 1;
 
                 createTable();
-                // auto test = ActorManager::createActor<Actor>(*this, center() * tileSize, Vector2(55, 55));
-                // test->addComponent<TextComponent>(TextComponent(*test, "HELLO???", SDL_Color{255, 255, 255}, Loader::getAsset<FontAsset>("fontLarge")));
                 
                 Stage::start();
             }
@@ -80,9 +81,7 @@ namespace Demo1
                 m_requiredScore = 1;
                 placeCards();
 
-                createScore();
-
-                createDeductionWheel();
+                createUI();
 
                 if (!_audioMixer->isPlaying()) _audioMixer->togglePlay();
             }
@@ -205,6 +204,18 @@ namespace Demo1
                 hintTextVolt->addComponent<TextComponent>(TextComponent(*hintTextVolt, std::to_string(sumVoltorbs).c_str(), colorBlack, font));
                 _table.emplace_back(hintTextVolt);
 
+            }
+
+            void createUI()
+            {
+                _muteButton = ActorManager::createActor<MuteButton>(*this, Vector2(tileSize * 29, tileSize * 0.5f), Vector2(38, 38));
+                _muteButton->setMixer(_audioMixer);
+
+                _table.emplace_back(_muteButton);
+
+                createScore();
+
+                createDeductionWheel();
             }
 
             void createDeductionWheel()
@@ -345,6 +356,7 @@ namespace Demo1
                 _table.emplace_back(msg);
 
                 m_timeOfDeath = getTime();
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicEnd"));
             }
 
             void resetTable()
@@ -355,6 +367,7 @@ namespace Demo1
                 createTable();
 
                 m_gameOver = false;
+                _audioMixer->playMusic(Loader::getAsset<AudioAsset>("musicMain"));
             }
             void deleteTable()
             {
@@ -365,6 +378,7 @@ namespace Demo1
                     it = nullptr;
                 }
 
+                _muteButton = nullptr;
                 _table.clear();
                 for (auto &deduction : _deductionWheel->getChildren())
                 {

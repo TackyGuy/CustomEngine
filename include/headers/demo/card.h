@@ -52,7 +52,7 @@ namespace Demo1
             {
                 if (_backSprite) this->addComponent<SpriteRendererComponent>(SpriteRendererComponent{*this, _backSprite});
                 
-                this->addComponent<ColliderComponent>(ColliderComponent{*this, *this->getComponent<TransformComponent>(), "card"});
+                this->addComponent<ColliderComponent>(ColliderComponent{*this, *this->getComponent<TransformComponent>(), "card", true});
                 _flipSfx = Loader::getAsset<AudioAsset>("sfxClick");
                 _selectSfx = Loader::getAsset<AudioAsset>("sfxSelect");
 
@@ -165,7 +165,7 @@ namespace Demo1
                         if (!m_flipped)
                         {
                             reveal();
-                            stage.getAudioMixer()->playSound(_sfx);
+                            stage.getAudioMixer()->playSound(_sfx, stage.getTime());
                             if (m_isBomb) stage.sendMessage("gameOver");
                             else
                             {
@@ -192,7 +192,7 @@ namespace Demo1
                 if (!m_flipped) 
                 {
                     _spriteRenderer->setSprite(_hoverSprite);
-                    stage.getAudioMixer()->playSound(_selectSfx);
+                    stage.getAudioMixer()->playSound(_selectSfx, stage.getTime());
 
                     std::string str = "select_";
                     str += std::to_string(m_cardIndex.first);

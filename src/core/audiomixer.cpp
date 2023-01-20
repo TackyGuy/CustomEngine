@@ -20,23 +20,50 @@ const int AudioMixer::getSoundVolume() const
 
 void AudioMixer::playMusic(std::shared_ptr<AudioAsset> music)
 {
+    if (!m_canPlay) return;
+    
     _currentMusic = music;
     Mix_VolumeMusic(m_musicVolume);
     Mix_PlayMusic(_currentMusic->getMusic(), -1);
 }
-void AudioMixer::playSound(std::shared_ptr<AudioAsset> sound)
+void AudioMixer::playSound(std::shared_ptr<AudioAsset> sound, double t)
 {
+    if (!m_canPlay) return;
+    if (t + soundDelay < m_lastPlayedSound) return;
+    
     int channel =  Mix_PlayChannel(-1, sound->getSoundChunk(), 0);
     Mix_Volume(channel, m_soundVolume);
+    m_lastPlayedSound = t;
 }
 
 void AudioMixer::togglePlay()
 {
-    if (Mix_PausedMusic()) Mix_ResumeMusic();
-    else Mix_PauseMusic();
+    if (!m_canPlay) 
+    {
+        Mix_ResumeMusic();
+        m_canPlay = true;
+    }
+    else 
+    {
+        Mix_PauseMusic();
+        m_canPlay = false;
+    }
+}
+void AudioMixer::togglePlay(bool val)
+{
+    if (val)
+    {
+        Mix_ResumeMusic();
+        m_canPlay = true;
+    }
+    else 
+    {
+        Mix_PauseMusic();
+        m_canPlay = false;
+    }
 }
 
 const bool AudioMixer::isPlaying() const
 {
-    return (bool)Mix_PlayingMusic();
+    return m_canPlay;
 }
