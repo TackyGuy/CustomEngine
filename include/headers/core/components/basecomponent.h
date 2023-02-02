@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "broadcasterinterface.h"
+#include "actorinterface.h"
 
 #define TYPE
 
@@ -17,15 +17,15 @@ namespace Core
         private:
             bool m_active;
         protected:
-            const BroadcasterInterface& broadcaster;
+            const ActorInterface& actorInterface;
 
             virtual ~BaseComponent(){}
             /**
              * @brief Construct a new Base Component object.
              * 
-             * @param broadcaster A reference to the actor that holds the component
+             * @param actor A reference to the actor that holds the component
              */
-            BaseComponent(const BroadcasterInterface& p_broadcaster) : broadcaster(p_broadcaster){}
+            BaseComponent(const ActorInterface& actor) : actorInterface(actor){}
         public:
             static const size_t Type;
             /**
@@ -75,6 +75,5 @@ namespace Core
             {
                 // std::cout << "Message received: " << msg << " from: " << sender << std::endl;
             }
-            
     };
 }

@@ -30,11 +30,6 @@ const bool Actor::isActive() const
     return m_active;
 }
 
-const int Actor::getID() const
-{
-    return m_id;
-}
-
 void Actor::setParent(std::shared_ptr<Actor> parent)
 {
     _parent = parent;

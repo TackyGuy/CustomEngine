@@ -23,24 +23,6 @@ bool Collision::AABB(const BoundingBox& boxA, const BoundingBox& boxB)
     return false;
 }
 
-void Collision::createNodeTree()
-{
-    // _worldAABB.getSize().print();
-    // std::cout << "\nCreating Node tree..." << std::endl;
-    std::map<int, std::shared_ptr<ColliderComponent>>::iterator it;
-    if (!_colliders.empty())
-    {
-        for (it = _colliders.begin(); it != _colliders.end(); it++)
-        {
-            if (AABB(_rootNode.AABB, it->second->getAABB())) createNode(_rootNode, it->second);
-        }
-    }
-
-    // _rootNode.printChildren(0);
-    
-    bspDone = true;
-}
-
 void Collision::createNode(Node& root, std::shared_ptr<ColliderComponent> collider)
 {
     if (collider == nullptr) 
@@ -252,6 +234,7 @@ void Collision::updateNodeTree()
 {
     dirtyNodes.clear();
     updateNodes(&_rootNode);
+    // _rootNode.printChildren(0);
 
     std::vector<Node*>::iterator it;
     for (it = dirtyNodes.begin(); it != dirtyNodes.end(); it++)
@@ -320,10 +303,20 @@ void Collision::addCollider(int id, std::shared_ptr<ColliderComponent> col)
 {
     std::cout << "adding new collider" << std::endl;
     _colliders.emplace(id, col);
+    if (AABB(_rootNode.AABB, col->getAABB())) createNode(_rootNode, col);
 }
 void Collision::removeCollider(int id)
 {
     if (_colliders.find(id) != _colliders.end()) _colliders.erase(id);
+}
+void Collision::removeAllColliders()
+{
+    for (auto &collider : _colliders)
+    {
+        collider.second = nullptr;
+    }
+
+    _colliders.clear();
 }
 
 bool Collision::findCollider(int id)

@@ -21,9 +21,9 @@ namespace Core
             /**
              * @brief Construct a new Renderer Component object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the actor interface
              */
-            RendererComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster){};
+            RendererComponent(const ActorInterface& actor) : BaseComponent(actor){}
 
             /**
              * @brief Renders this component at the selected position and with the desired size

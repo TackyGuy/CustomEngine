@@ -64,15 +64,9 @@ namespace Core
             {
                 if (collider != nullptr) _collider = collider;
 
-                if (srComponent != nullptr)
-                {
-                    _spriteRenderer = srComponent;
-                }
+                if (srComponent != nullptr) _spriteRenderer = srComponent;
 
-                if (txtRenderer != nullptr)
-                {
-                    _textRenderer = txtRenderer;
-                }
+                if (txtRenderer != nullptr) _textRenderer = txtRenderer;
             }
 
             /**

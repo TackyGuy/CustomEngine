@@ -24,10 +24,8 @@ namespace Core
         public:
             ~InputProvider()
             {
-                delete _previousInput;
-                delete _currentInput;
-
-                delete _currentHovered;
+                _previousInput = nullptr;
+                _currentInput = nullptr;
                 _currentHovered = nullptr;
             }
             InputProvider(){}

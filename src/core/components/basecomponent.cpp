@@ -15,5 +15,5 @@ void BaseComponent::setActive(bool state)
 
 void BaseComponent::sendMessage(const std::string& msg)
 {
-    if (!msg.empty()) broadcaster.broadcastMessage(msg, getType());
+    if (!msg.empty()) actorInterface.broadcastMessage(msg, getType());
 }

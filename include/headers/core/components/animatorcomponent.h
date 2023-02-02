@@ -37,15 +37,15 @@ namespace Core
             /**
              * @brief Construct a new Animator Component object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the Actor interface
              * @param spriteRenderer The SpriteRendererComponent to animate
              */
-            AnimatorComponent(const BroadcasterInterface& p_broadcaster, SpriteRendererComponent& p_spriteRenderer) : 
-            BaseComponent(p_broadcaster), spriteRenderer(p_spriteRenderer)
+            AnimatorComponent(const ActorInterface& actor, SpriteRendererComponent& p_spriteRenderer) : 
+            BaseComponent(actor), spriteRenderer(p_spriteRenderer)
             {}
             AnimatorComponent(AnimatorComponent& other) = default;
             AnimatorComponent(AnimatorComponent&& other):
-                BaseComponent(other.broadcaster), spriteRenderer(other.spriteRenderer)
+                BaseComponent(other.actorInterface), spriteRenderer(other.spriteRenderer)
             {
                 m_paused = other.m_paused;
                 m_lastMessage = other.m_lastMessage;

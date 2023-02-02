@@ -35,7 +35,7 @@ namespace Demo1
         public:
             ~VoltorbStage(){}
 
-            VoltorbStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){}
+            VoltorbStage(StageManager *stageManager, std::shared_ptr<AudioMixer> mixer) : Stage(stageManager, 32, 23, 32, mixer){}
 
             void preload() override
             {
@@ -288,7 +288,7 @@ namespace Demo1
                         if (_inputProvider->isMouseButtonPressed(2))
                         {
                             if (_deductionWheel->isActive()) return;
-
+                            
                             _deductionWheel->setActive(true);
                             _deductionWheel->getComponent<TransformComponent>()->setPosition(_inputProvider->getMousePosition() + Vector2(-25, -25));
                             for (auto child : _deductionWheel->getChildren())
@@ -374,7 +374,7 @@ namespace Demo1
                 for (auto &it : _table)
                 {
                     Collision::removeCollider(it->getID());
-                    ActorManager::deleteActor(*it);
+                    ActorManager::unregisterActor(*it);
                     it = nullptr;
                 }
 
@@ -382,9 +382,9 @@ namespace Demo1
                 _table.clear();
                 for (auto &deduction : _deductionWheel->getChildren())
                 {
-                    ActorManager::deleteActor(*deduction);
+                    ActorManager::unregisterActor(*deduction);
                 }
-                ActorManager::deleteActor(*_deductionWheel);
+                ActorManager::unregisterActor(*_deductionWheel);
                 _deductionWheel = nullptr;
                 ActorManager::updateActorMap();
                 _inputProvider->reset();

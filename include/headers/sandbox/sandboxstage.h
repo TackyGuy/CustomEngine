@@ -24,7 +24,7 @@ namespace Sandbox
             std::shared_ptr<Actor> backgroundProp = nullptr;
         public: 
             ~SandboxStage(){}
-            SandboxStage(std::shared_ptr<AudioMixer> mixer) : Stage(32, 23, 32, mixer){};
+            SandboxStage(StageManager *stageManager, std::shared_ptr<AudioMixer> mixer) : Stage(stageManager, 32, 23, 32, mixer){}
 
             void preload() override
             {

@@ -34,18 +34,20 @@ namespace Core
             /**
              * @brief Construct a new RigidbodyComponent object
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the IBroadcaster interface
              * @param transform The TransformComponent
              * @param collider The ColliderComponent
              * @param type The type of RigidBody this RigidbodyComponent should be
              */
-            RigidbodyComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> transform, std::shared_ptr<ColliderComponent> collider, Body type) : 
-            BaseComponent(p_broadcaster), _transform(transform), _collider(collider), bodyType(type)
-            {}
+            RigidbodyComponent(const ActorInterface& actor, std::shared_ptr<TransformComponent> transform, std::shared_ptr<ColliderComponent> collider, Body type) : 
+            BaseComponent(actor), _transform(transform), _collider(collider), bodyType(type)
+            {
+                if (!Collision::findCollider(actorInterface.getID())) Collision::addCollider(actorInterface.getID(), _collider);
+            }
 
             RigidbodyComponent(RigidbodyComponent& other) = default;
             RigidbodyComponent(RigidbodyComponent&& other):
-                BaseComponent(other.broadcaster)
+                BaseComponent(other.actorInterface)
             {
                 _transform = other._transform;
                 _collider = other._collider;

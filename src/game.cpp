@@ -24,19 +24,6 @@ void Game::run()
     update();
 }
 
-bool Game::isInBounds(TransformComponent *trans)
-{
-    float x = trans->getPosition().getX();
-    float y = trans->getPosition().getY();
-
-    if (x < 0 || x > SCREEN_WIDTH)
-        return false;
-    if (y < 0 || y > SCREEN_HEIGHT)
-        return false;
-
-    return true;
-}
-
 void Game::init(const char* title, int x, int y)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING))
@@ -60,13 +47,12 @@ void Game::init(const char* title, int x, int y)
 
     m_mixer = std::make_shared<AudioMixer>(AudioMixer(0.5));
 
-    // m_stage = new SandboxStage(m_mixer);
-    m_stage = new Demo1::VoltorbStage(m_mixer);
-    m_stage->preload();
+    setStage("menu");
 }
 
 void Game::update()
 {
+    m_start = true;
     m_stage->start();
     while (m_GameState != GameState::QUIT)
     {
@@ -81,19 +67,22 @@ void Game::update()
 
         while (m_accumulator >= fixedTime)
         {
-            // Check collisions
-            handleCollisions();
-            // Handle events
-            handleEvents();
-            // TODO FixedUpdate here
-            // find out why it crashes
-            m_stage->update(fixedTime);
+            if (m_stage)
+            {
+                // Check collisions
+                handleCollisions();
+                // Handle events
+                handleEvents();
+                // TODO FixedUpdate here
+                // find out why it crashes
+                m_stage->update(fixedTime);
+            }
             
             m_accumulator -= fixedTime;
             m_currentTime += fixedTime;
         }
         
-        render();
+        if (m_stage) render();
         // We delay the update
         /*int frameTicks = SDL_GetTicks() - startTicks;
 
@@ -129,34 +118,20 @@ void Game::handleCollisions()
         auto rb = actor->getComponent<RigidbodyComponent>();
         if (!rb) continue;
 
-        if (!Collision::bspDone)
-        {
-            auto col = rb->getCollider();
-            if (col == nullptr) continue;
-
-            if (!Collision::findCollider(actor->getID())) Collision::addCollider(actor->getID(), col);
-        }
-        else
-        {
-            if (rb->bodyType == RigidbodyComponent::Body::DYNAMIC)
+        // We only check the collisions of dynamic objects
+        if (rb->bodyType == RigidbodyComponent::Body::DYNAMIC)
+        {   
+            auto cols = Collision::getColliders(rb->getCollider());
+            if (cols.size())
             {
-                if (rb->getCollider()) continue;
-                
-                auto cols = Collision::getColliders(rb->getCollider());
-                if (cols.size())
+                std::cout << "hi " << actor->getID() << std::endl;
+                for (auto col : cols)
                 {
-                    for (auto col : cols)
-                    {
-                        rb->onCollision(col);
-                    }
+                    rb->onCollision(col);
                 }
             }
         }
-
-        
     }
-
-    if (!Collision::bspDone) Collision::createNodeTree();
 }
 
 void Game::handleEvents()

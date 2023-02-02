@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stagemanager.h"
 #include "inputprovider.h"
 #include "audiomixer.h"
 #include "actormanager.h"
@@ -12,6 +13,7 @@ namespace Core
         private:
             double m_elapsedTime;
         protected:
+            StageManager *_stageManager = nullptr;
             const int stageWidth;
             const int stageHeight;
             const int tileSize;
@@ -21,9 +23,14 @@ namespace Core
 
             Vector2 center() const;
         public:
-            virtual ~Stage(){}
+            virtual ~Stage()
+            {
+                _stageManager = nullptr;
+                Collision::removeAllColliders();
+                ActorManager::deleteAllActors();
+            }
 
-            Stage(int width, int height, int size, std::shared_ptr<AudioMixer> mixer) : stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
+            Stage(StageManager *stageManager, int width, int height, int size, std::shared_ptr<AudioMixer> mixer) : _stageManager(stageManager), stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)
             {
                 _inputProvider = std::make_shared<InputProvider>(InputProvider());
                 _inputProvider->initialize();
@@ -62,7 +69,6 @@ namespace Core
                     {
                         if (actor->isReady()) actor->update(dt);
                         else actor->start();
-                        
                     }
                 }
             }
@@ -72,7 +78,7 @@ namespace Core
              * 
              * @param msg The message as a string
              */
-            virtual void sendMessage(std::string msg) = 0;
+            virtual void sendMessage(std::string msg){}
 
             /**
              * @brief Get a shared_ptr to the InputProvider

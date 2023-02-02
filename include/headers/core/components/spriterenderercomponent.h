@@ -32,11 +32,11 @@ namespace Core
             /**
              * @brief Construct a new SpriteRendererComponent object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the IBroadcaster interface
              * @param sprite shared_ptr to the Sprite this spriterenderer should hold
              */
-            SpriteRendererComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<Sprite> sprite)
-            : RendererComponent(p_broadcaster), _sprite(sprite)
+            SpriteRendererComponent(const ActorInterface& actor, std::shared_ptr<Sprite> sprite)
+            : RendererComponent(actor), _sprite(sprite)
             {
                 m_rect.x = 0;
                 m_rect.y = 0;
@@ -46,26 +46,26 @@ namespace Core
             /**
              * @brief Construct a new SpriteRendererComponent object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the IBroadcaster interface
              * @param sprite shared_ptr to the Sprite this spriterenderer should hold
              * @param rect The Rect of the Sprite
              */
-            SpriteRendererComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<Sprite> sprite, SDL_Rect rect)
-            : RendererComponent(p_broadcaster), _sprite(sprite), m_rect(rect)
+            SpriteRendererComponent(const ActorInterface& actor, std::shared_ptr<Sprite> sprite, SDL_Rect rect)
+            : RendererComponent(actor), _sprite(sprite), m_rect(rect)
             {}
             /**
              * @brief Construct a new SpriteRendererComponent object by copy.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the IBroadcaster interface
              * @param sr The SpriteRenderComponent to copy
              */
-            SpriteRendererComponent(const BroadcasterInterface& p_broadcaster, const SpriteRendererComponent& sr)
-            : RendererComponent(p_broadcaster), _sprite(sr._sprite), m_rect(sr.m_rect)
+            SpriteRendererComponent(const ActorInterface& actor, const SpriteRendererComponent& sr)
+            : RendererComponent(actor), _sprite(sr._sprite), m_rect(sr.m_rect)
             {}
 
             SpriteRendererComponent(SpriteRendererComponent& other) = default;
             SpriteRendererComponent(SpriteRendererComponent&& other):
-                RendererComponent(other.broadcaster)
+                RendererComponent(other.actorInterface)
             {
                 _sprite = other._sprite;
                 m_rect = other.m_rect;

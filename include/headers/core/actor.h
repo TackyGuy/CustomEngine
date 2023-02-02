@@ -5,7 +5,7 @@
 #include "renderwindow.h"
 #include "mathutils.h"
 
-#include "broadcasterinterface.h"
+#include "actorinterface.h"
 #include "basecomponent.h"
 #include "transformcomponent.h"
 #include "renderercomponent.h"
@@ -21,7 +21,7 @@
 namespace Core
 {
     class Stage;
-    class Actor : public BroadcasterInterface
+    class Actor : public ActorInterface
     {
         protected:
             Stage &stage;
@@ -58,10 +58,26 @@ namespace Core
             }
             Actor(const Actor& other) = default;
             Actor(Actor&& other) = default;
-            
 
             // Returns the id of this actor
-            const int getID() const;
+            const int getID() const override
+            {
+                return m_id;
+            }
+
+            /**
+             * @brief Broadcasts a message to all the components attached to this Actor object.
+             * 
+             * @param msg A string containing the message to be broadcasted
+             * @param size_t The type of the message sender
+             */
+            void broadcastMessage(const std::string& msg, const size_t sender) const override
+            {
+                for (auto it = _components.begin(); it != _components.end(); it++)
+                {
+                    it->second->OnMessage(msg, sender);
+                }
+            } 
 
             virtual void init()
             {
@@ -127,6 +143,7 @@ namespace Core
                     return;
                 }
                 // else std::cout << "Adding new component..." << std::endl;
+                cmpt->setActive(true);
                 _components.emplace(T::Type, cmpt);
             }
             /**
@@ -162,19 +179,5 @@ namespace Core
             const int getChildrenCount() const;
 
             #pragma endregion
-
-            /**
-             * @brief Broadcasts a message to all the components attached to this Actor object.
-             * 
-             * @param msg A string containing the message to be broadcasted
-             * @param size_t The type of the message sender
-             */
-            void broadcastMessage(const std::string& msg, const size_t sender) const override
-            {
-                for (auto it = _components.begin(); it != _components.end(); it++)
-                {
-                    it->second->OnMessage(msg, sender);
-                }
-            }
     };
 }

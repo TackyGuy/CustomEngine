@@ -36,9 +36,9 @@ namespace Core
             /**
              * @brief Construct a new Transform Component object with every members holding a Vector2(0, 0).
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the actor interface
              */
-            TransformComponent(const BroadcasterInterface& p_broadcaster, std::shared_ptr<TransformComponent> parent) :BaseComponent(p_broadcaster)
+            TransformComponent(const ActorInterface& actor, std::shared_ptr<TransformComponent> parent) : BaseComponent(actor)
             {
                 _parentTransform = parent;
                 m_position = Vector2(0, 0);
@@ -48,12 +48,12 @@ namespace Core
             /**
              * @brief Construct a new Transform Component object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the actor interface
              * @param pos The position
              * @param scale The scale
              */
-            TransformComponent(const BroadcasterInterface& p_broadcaster, const Vector2& pos, const Vector2& scale, std::shared_ptr<TransformComponent> parent)
-            : BaseComponent(p_broadcaster), m_position(pos), m_scale(scale)
+            TransformComponent(const ActorInterface& actor, const Vector2& pos, const Vector2& scale, std::shared_ptr<TransformComponent> parent)
+            : BaseComponent(actor), m_position(pos), m_scale(scale)
             {
                 _parentTransform = parent;
                 calculateCenter();
@@ -61,11 +61,11 @@ namespace Core
             /**
              * @brief Construct a new Transform Component object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param p_broadcaster The actor that implements the actor interface
              * @param transform The TransformComponent to copy
              */
-            TransformComponent(const BroadcasterInterface& p_broadcaster, const TransformComponent& transform)
-            : BaseComponent(p_broadcaster), m_position(transform.m_position), m_scale(transform.m_scale), m_center(transform.m_center)
+            TransformComponent(const ActorInterface& actor, const TransformComponent& transform)
+            : BaseComponent(actor), m_position(transform.m_position), m_scale(transform.m_scale), m_center(transform.m_center)
             {}
 
             TransformComponent(const TransformComponent& other) = default;

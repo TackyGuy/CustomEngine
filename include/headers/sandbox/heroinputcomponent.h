@@ -23,18 +23,18 @@ namespace Sandbox
         public:
 
             ~HeroInputComponent(){};
-            HeroInputComponent(const Core::BroadcasterInterface& p_broadcaster, HeroStates& states, std::shared_ptr<Core::RigidbodyComponent> rigidbody, std::shared_ptr<Core::AnimatorComponent> animator)
-            : Core::InputComponent(p_broadcaster), heroStates(states), _rigidbody(rigidbody), _animator(animator)
+            HeroInputComponent(const Core::ActorInterface& actor, HeroStates& states, std::shared_ptr<Core::RigidbodyComponent> rigidbody, std::shared_ptr<Core::AnimatorComponent> animator)
+            : Core::InputComponent(actor), heroStates(states), _rigidbody(rigidbody), _animator(animator)
             {}
 
             HeroInputComponent(HeroInputComponent& other)
-            : InputComponent(other.broadcaster), heroStates(other.heroStates)
+            : InputComponent(other.actorInterface), heroStates(other.heroStates)
             {
                 _rigidbody = other._rigidbody;
                 _animator = other._animator;
             }
             HeroInputComponent(HeroInputComponent&& other):
-                InputComponent(other.broadcaster), heroStates(other.heroStates)
+                InputComponent(other.actorInterface), heroStates(other.heroStates)
             {
                 _rigidbody = other._rigidbody;
                 _animator = other._animator;

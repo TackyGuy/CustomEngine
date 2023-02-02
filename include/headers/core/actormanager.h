@@ -43,11 +43,16 @@ namespace Core
              */
             static void registerActor(const std::shared_ptr<Actor> actor);
             /**
-             * @brief Unregister and delete the specified Actor object.
+             * @brief Unregister the specified Actor object.
              * 
              * @param actor The Actor object to delete.
              */
-            static void deleteActor(Actor actor);
+            static void unregisterActor(Actor actor);
+            /**
+             * @brief Unregister AND delete all the Actor objects.
+             * 
+             */
+            static void deleteAllActors();
 
             static void updateActorMap();
             static void updateActiveActors();

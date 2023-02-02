@@ -7,10 +7,19 @@ void ActorManager::registerActor(const std::shared_ptr<Actor> actor)
     // std::cout << "Actor registered" << std::endl;
 }
 
-void ActorManager::deleteActor(Actor actor)
+void ActorManager::unregisterActor(Actor actor)
 {
     if (actor.isActive()) s_activeActors.erase(actor.getID());
     s_actors[actor.getID()] = nullptr;
+}
+void ActorManager::deleteAllActors()
+{
+    for (auto &it : s_actors)
+    {
+        if (it.second->isActive()) s_activeActors.erase(it.second->getID());
+        it.second = nullptr;
+    }
+    
 }
 
 void ActorManager::updateActorMap()

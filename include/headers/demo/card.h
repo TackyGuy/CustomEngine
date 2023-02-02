@@ -31,10 +31,10 @@ namespace Demo1
         public:
             ~Card()
             {
-                if (_voltorbDeduction) ActorManager::deleteActor(*_voltorbDeduction);
-                if (_oneDeduction) ActorManager::deleteActor(*_oneDeduction);
-                if (_twoDeduction) ActorManager::deleteActor(*_twoDeduction);
-                if (_threeDeduction) ActorManager::deleteActor(*_threeDeduction);
+                if (_voltorbDeduction) ActorManager::unregisterActor(*_voltorbDeduction);
+                if (_oneDeduction) ActorManager::unregisterActor(*_oneDeduction);
+                if (_twoDeduction) ActorManager::unregisterActor(*_twoDeduction);
+                if (_threeDeduction) ActorManager::unregisterActor(*_threeDeduction);
             }
             /**
              * @brief Construct a new Button object

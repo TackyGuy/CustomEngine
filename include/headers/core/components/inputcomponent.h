@@ -23,9 +23,9 @@ namespace Core
             /**
              * @brief Construct a new InputComponent object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the actor interface
              */
-            InputComponent(const BroadcasterInterface& p_broadcaster) : BaseComponent(p_broadcaster){};
+            InputComponent(const ActorInterface& actor) : BaseComponent(actor){};
 
             InputComponent(InputComponent& other) = default;
             InputComponent(InputComponent&& other) = default;

@@ -19,6 +19,8 @@
 #include "textcomponent.h"
 
 #include "stage.h"
+#include "stagemanager.h"
+#include "menustage.h"
 #include "sandboxstage.h"
 #include "voltorbstage.h"
 
@@ -34,9 +36,8 @@ using namespace Sandbox;
 
 enum GameState {PLAY, QUIT};
 
-class Game
+class Game : public StageManager
 {
-
     private:
         void init(const char* title, int x, int y);
         void update();
@@ -44,6 +45,8 @@ class Game
         void handleCollisions();
         void handleEvents();
         Stage *m_stage = nullptr;
+        bool m_loadingStage = false;
+        bool m_start = false;
 
         std::shared_ptr<RenderWindow> m_window;
         std::shared_ptr<AudioMixer> m_mixer = nullptr;
@@ -63,7 +66,42 @@ class Game
         inline static const int SCREEN_WIDTH = 1024;
         inline static const int SCREEN_HEIGHT = 720;
 
-        void run();
+        void setStage(std::string stageName) override
+        {
+            if (m_loadingStage) return;
+            if (!m_mixer) return;
 
-        bool isInBounds(TransformComponent *trans);
+            if (stageName == "menu") 
+            {
+                if (m_stage) delete m_stage;
+
+                m_stage = new Menu::MenuStage(this, m_mixer);
+            }
+            else if (stageName == "voltorb") 
+            {
+                if (m_stage) delete m_stage;
+                
+                m_stage = new Demo1::VoltorbStage(this, m_mixer);
+            }
+            else if (stageName == "sandbox") 
+            {
+                if (m_stage) delete m_stage;
+                
+                m_stage = new Sandbox::SandboxStage(this, m_mixer);
+            }
+            else
+            {
+                std::cout << "Stage: " << stageName << " is invalid." << std::endl;
+                return;
+            }
+
+            m_loadingStage = true;
+            std::cout << "Loading stage '" << stageName << "'..." << std::endl;
+
+            m_stage->preload();
+            if (m_start) m_stage->start();
+            m_loadingStage = false;
+        }
+
+        void run();
 };

@@ -80,8 +80,8 @@ namespace Core
     class Collision
     {
         private:
-            ~Collision(){};
-            Collision(){};
+            ~Collision(){}
+            Collision(){}
 
             inline static std::map<int, std::shared_ptr<ColliderComponent>> _colliders;
             inline static std::vector<Node*> dirtyNodes;
@@ -107,14 +107,6 @@ namespace Core
              * @return false if they don't overlap
              */
             static bool AABB(const BoundingBox& boxA, const BoundingBox& boxB);
-
-            // Is the binary spatial partionning done
-            inline static bool bspDone = false;
-            /**
-             * @brief Create a Node Tree object
-             * 
-             */
-            static void createNodeTree();
 
             /**
              * @brief Get the all the ColliderComponents that collide with the specified ColliderComponent.
@@ -145,6 +137,11 @@ namespace Core
              * @param id The id of the ColliderComponent to remove
              */
             static void removeCollider(int id);
+            /**
+             * @brief Empty the vector of ColliderComponents.
+             * 
+             */
+            static void removeAllColliders();
             /**
              * @brief Look for a specific ColliderComponent in the vector of ColliderComponents
              * 

@@ -37,7 +37,6 @@ namespace Demo1
             void setMixer(std::shared_ptr<AudioMixer> audioMixer)
             {
                 _audioMixer = audioMixer;
-                std::cout << "see" << std::endl;
             }
 
             /**

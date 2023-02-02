@@ -39,20 +39,20 @@ namespace Core
             /**
              * @brief Construct a new TextComponent object.
              * 
-             * @param p_broadcaster The actor that implements the IBroadcaster interface
+             * @param actor The actor that implements the IBroadcaster interface
              * @param str The text this TextComponent should hold
              * @param colour The colour of the text
              * @param font The font in which the text should be written
              */
-            TextComponent(const BroadcasterInterface& p_broadcaster, const char *str, SDL_Color colour, std::shared_ptr<FontAsset> font): 
-                RendererComponent(p_broadcaster), m_text(str), m_colour(colour), _fontAsset(font)
+            TextComponent(const ActorInterface& actor, const char *str, SDL_Color colour, std::shared_ptr<FontAsset> font): 
+                RendererComponent(actor), m_text(str), m_colour(colour), _fontAsset(font)
             {
                 createSurface();
             }
 
             TextComponent(TextComponent& other) = default;
             TextComponent(TextComponent&& other):
-                RendererComponent(other.broadcaster)
+                RendererComponent(other.actorInterface)
             {
                 m_text = other.m_text;
                 m_colour = other.m_colour;
