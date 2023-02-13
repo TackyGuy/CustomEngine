@@ -12,6 +12,7 @@
 				"-Wno-sign-compare",
 				"-static-libstdc++",
 				"-static-libgcc",
+				"-static-libwinpthread-1",
 				"-g",
 				"-std=c++17",
 				"-I${workspaceFolder}\\include",
