@@ -12,7 +12,11 @@ namespace Menu
     {
         private:
             std::shared_ptr<Button> voltorbButton = nullptr;
+            std::shared_ptr<Actor> voltorbText = nullptr;
             std::shared_ptr<Button> sandboxButton = nullptr;
+            std::shared_ptr<Actor> sandboxText = nullptr;
+
+            SDL_Color colorText = {255, 255, 255};
         public:
             ~MenuStage(){}
 
@@ -20,15 +24,17 @@ namespace Menu
 
             void preload() override
             {
-                Loader::loadAsset("uisheet", new SpritesheetAsset("res/sprites/user_interface/buttons.png", 16, 16));
+                Loader::loadAsset("fontRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 14));
             }
 
             void start() override
             {
-                auto sprite = Loader::getAsset<SpritesheetAsset>("uisheet")->getSpriteAt(0);
+                auto font = Loader::getAsset<FontAsset>("fontRegular");
+                Vector2 fontSize = Vector2(16, 16);
+                float posX = 12;
+                double textOffset = 1;
 
-                voltorbButton = ActorManager::createActor<Button>(*this, center() + Vector2(12.5 * tileSize, 6 * tileSize), Vector2(156, 56)); 
-                voltorbButton->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*voltorbButton, sprite));
+                voltorbButton = ActorManager::createActor<Button>(*this, center() + Vector2(posX, 4 * tileSize), Vector2(156, 56));
                 voltorbButton->addComponent<ColliderComponent>(ColliderComponent(*voltorbButton, *voltorbButton->getComponent<TransformComponent>(), "ui", true));
                 voltorbButton->setupButton(voltorbButton->getComponent<ColliderComponent>(), voltorbButton->getComponent<SpriteRendererComponent>(), nullptr);
 
@@ -39,9 +45,11 @@ namespace Menu
                         if (_stageManager) _stageManager->setStage("voltorb");
                     }
                 });
+                voltorbText = ActorManager::createActor<Actor>(*this, center() + Vector2(posX, (4  + textOffset)* tileSize), fontSize);
+                voltorbText->addComponent<TextComponent>(TextComponent(*voltorbText, "> Voltorb Flip", colorText, font));
+                voltorbButton->attachChild(voltorbText);
 
-                sandboxButton = ActorManager::createActor<Button>(*this, center() + Vector2(12.5 * tileSize, 12 * tileSize), Vector2(156, 56)); 
-                sandboxButton->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*sandboxButton, sprite));
+                sandboxButton = ActorManager::createActor<Button>(*this, center() + Vector2(posX, 10 * tileSize), Vector2(156, 56));
                 sandboxButton->addComponent<ColliderComponent>(ColliderComponent(*sandboxButton, *sandboxButton->getComponent<TransformComponent>(), "ui", true));
                 sandboxButton->setupButton(sandboxButton->getComponent<ColliderComponent>(), sandboxButton->getComponent<SpriteRendererComponent>(), nullptr);
 
@@ -52,6 +60,9 @@ namespace Menu
                         if (_stageManager) _stageManager->setStage("sandbox");
                     }
                 });
+                sandboxText = ActorManager::createActor<Actor>(*this, center() + Vector2(posX, (10 + textOffset) * tileSize), fontSize);
+                sandboxText->addComponent<TextComponent>(TextComponent(*sandboxText, "> Sandbox", colorText, font));
+                sandboxButton->attachChild(sandboxText);
 
                 Stage::start();
             }

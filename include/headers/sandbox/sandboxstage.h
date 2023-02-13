@@ -19,6 +19,7 @@ namespace Sandbox
     class SandboxStage: public Stage
     {
         private:
+            bool gameOver = false;
             std::shared_ptr<Actor> _counter= nullptr;
             std::vector<Actor*> tiles;
             std::shared_ptr<Actor> backgroundProp = nullptr;
@@ -30,9 +31,7 @@ namespace Sandbox
             {
                 Loader::loadAsset("hero", new SpritesheetAsset("res/sprites/characters/hero.png", 48, 48));
                 Loader::loadAsset("tileset", new SpritesheetAsset("res/sprites/tiles_dungeon.png", 16, 16));
-                Loader::loadAsset("gui", new SpritesheetAsset("res/sprites/user_interface/gui.png", 16, 16));
                 Loader::loadAsset("icons", new SpritesheetAsset("res/sprites/user_interface/icons.png", 16, 16));
-                Loader::loadAsset("voltorb", new SpritesheetAsset("res/sprites/placeholders/voltorb.png", 33, 33));
 
                 Loader::loadAsset("weiholmirRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 16));
                 Loader::loadAsset("music", new AudioAsset("res/sounds/pokeMart.mp3", true));
@@ -138,16 +137,11 @@ namespace Sandbox
                     bottomWall->getComponent<ColliderComponent>(), RigidbodyComponent::Body::STATIC));
                 
 
-                std::shared_ptr<Hero>player = ActorManager::createActor<Hero>(*this, Vector2(250, 150), Vector2(128, 128));
+                std::shared_ptr<Hero> player = ActorManager::createActor<Hero>(*this, Vector2(250, 150), Vector2(128, 128));
 
                 _counter = ActorManager::createActor<Actor>(*this, Vector2((center().getX() - 2) * tileSize, (minY - 1) * tileSize), Vector2(10, 10));
                 SDL_Color colorWhite = {255, 255, 255};
                 _counter->addComponent<TextComponent>(TextComponent(*_counter, "0", colorWhite, Loader::getAsset<FontAsset>("weiholmirRegular")));
-
-                auto buttonTest = ActorManager::createActor<Button>(*this, Vector2((center().getX() - 1) * tileSize, center().getY() * tileSize), Vector2(80, 80));
-                buttonTest->addComponent<SpriteRendererComponent>(SpriteRendererComponent(*buttonTest, Loader::getAsset<SpritesheetAsset>("voltorb")->getSpriteAt(0)));
-                buttonTest->addComponent<ColliderComponent>(ColliderComponent(*buttonTest, *buttonTest->getComponent<TransformComponent>(), "ui", true));
-                buttonTest->setupButton(buttonTest->getComponent<ColliderComponent>(), buttonTest->getComponent<SpriteRendererComponent>(), nullptr);
 
                 setUI();
                 _audioMixer->setMusicVolume(3);
@@ -171,10 +165,15 @@ namespace Sandbox
 
             void update(double dt) override
             {
-                std::stringstream stream;
-                stream << "Elapsed: " << getTime();
-                std::string str = stream.str();
-                _counter->getComponent<TextComponent>()->setText(str);
+                if (!gameOver)
+                {
+                    std::stringstream stream;
+                    stream << "Elapsed: " << getTime();
+                    std::string str = stream.str();
+                    _counter->getComponent<TextComponent>()->setText(str);
+
+                    if (_inputProvider->isKeyPressed(SDL_SCANCODE_ESCAPE)) _stageManager->setStage("menu");
+                }
 
                 Stage::update(dt);
             }

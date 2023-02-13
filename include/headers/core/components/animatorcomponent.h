@@ -21,7 +21,7 @@ namespace Core
             AnimationSequence *_currentSequence = nullptr;
 
             SpriteRendererComponent& spriteRenderer;
-
+            
             bool isValid(const std::string& key);
         public:
             static const size_t Type;
@@ -30,10 +30,7 @@ namespace Core
                 return Type;
             }
 
-            ~AnimatorComponent()
-            {
-                delete _currentSequence;
-            }
+            ~AnimatorComponent(){}
             /**
              * @brief Construct a new Animator Component object.
              * 

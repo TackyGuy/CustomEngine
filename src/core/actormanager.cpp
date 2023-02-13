@@ -12,7 +12,7 @@ void ActorManager::unregisterActor(Actor actor)
     if (actor.isActive()) s_activeActors.erase(actor.getID());
     s_actors[actor.getID()] = nullptr;
 }
-void ActorManager::deleteAllActors()
+void ActorManager::unregisterAllActors()
 {
     for (auto &it : s_actors)
     {

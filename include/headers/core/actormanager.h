@@ -49,10 +49,10 @@ namespace Core
              */
             static void unregisterActor(Actor actor);
             /**
-             * @brief Unregister AND delete all the Actor objects.
+             * @brief Unregister all the Actor objects.
              * 
              */
-            static void deleteAllActors();
+            static void unregisterAllActors();
 
             static void updateActorMap();
             static void updateActiveActors();

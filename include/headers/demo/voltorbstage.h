@@ -39,17 +39,17 @@ namespace Demo1
 
             void preload() override
             {
-                Loader::loadAsset("spritesheet", new SpritesheetAsset("res/sprites/demo/spritesheet.png", 28, 28));
+                Loader::loadAsset("spritesheet", new SpritesheetAsset("res/sprites/voltorb/spritesheet.png", 28, 28));
                 Loader::loadAsset("uisheet", new SpritesheetAsset("res/sprites/user_interface/buttons.png", 16, 16));
 
                 Loader::loadAsset("musicMain", new AudioAsset("res/sounds/gameCorner.mp3", true));
                 Loader::loadAsset("musicEnd", new AudioAsset("res/sounds/pokeLullaby.mp3", true));
-                Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/demo/click.wav", false));
-                Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/demo/select.wav", false));
-                Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/demo/card1.wav", false));
-                Loader::loadAsset("sfxCard2", new AudioAsset("res/sounds/demo/card2.wav", false));
-                Loader::loadAsset("sfxCard3", new AudioAsset("res/sounds/demo/card3.wav", false));
-                Loader::loadAsset("sfxExplosion", new AudioAsset("res/sounds/demo/explosion.wav", false));
+                Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/voltorb/click.wav", false));
+                Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/voltorb/select.wav", false));
+                Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/voltorb/card1.wav", false));
+                Loader::loadAsset("sfxCard2", new AudioAsset("res/sounds/voltorb/card2.wav", false));
+                Loader::loadAsset("sfxCard3", new AudioAsset("res/sounds/voltorb/card3.wav", false));
+                Loader::loadAsset("sfxExplosion", new AudioAsset("res/sounds/voltorb/explosion.wav", false));
 
                 Loader::loadAsset("fontSmall", new FontAsset("res/fonts/weiholmir_regular.ttf", 12));
                 Loader::loadAsset("fontRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 14));
@@ -281,7 +281,7 @@ namespace Demo1
                 }
                 else
                 {
-                    if (_inputProvider->isKeyPressed(SDL_SCANCODE_7)) m_gameOver = true;
+                    if (_inputProvider->isKeyPressed(SDL_SCANCODE_ESCAPE)) _stageManager->setStage("menu");
 
                     if (_deductionWheel)
                     {

@@ -124,7 +124,6 @@ void Game::handleCollisions()
             auto cols = Collision::getColliders(rb->getCollider());
             if (cols.size())
             {
-                std::cout << "hi " << actor->getID() << std::endl;
                 for (auto col : cols)
                 {
                     rb->onCollision(col);

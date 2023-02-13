@@ -21,13 +21,18 @@ namespace Core
             std::shared_ptr<AudioMixer> _audioMixer = nullptr;
             std::shared_ptr<InputProvider> _inputProvider = nullptr;
 
+            /**
+             * @brief Gets the center point of the stage
+             * 
+             * @return Vector2 
+             */
             Vector2 center() const;
         public:
             virtual ~Stage()
             {
                 _stageManager = nullptr;
                 Collision::removeAllColliders();
-                ActorManager::deleteAllActors();
+                ActorManager::unregisterAllActors();
             }
 
             Stage(StageManager *stageManager, int width, int height, int size, std::shared_ptr<AudioMixer> mixer) : _stageManager(stageManager), stageWidth(width), stageHeight(height), tileSize(size), _audioMixer(mixer)

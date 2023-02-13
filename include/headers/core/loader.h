@@ -20,6 +20,7 @@ namespace Core
         private:
             static Loader s_instance;
             std::map<std::string, std::shared_ptr<Asset>> _loadedAssets;
+            bool m_debug = false;
             bool m_isInitialized = false;
             RenderWindow m_window;
 
@@ -30,18 +31,23 @@ namespace Core
                 if (!m_isInitialized) return false;
                 if (!assetToLoad) return false;
                 if (_loadedAssets.find(key) != _loadedAssets.end()) return false;
+
+                std::string path;
+                if (m_debug) path = "../";
                 
                 if (assetToLoad->getType() == Asset::SpritesheetType)
                 {
                     auto sheet = dynamic_cast<SpritesheetAsset*>(assetToLoad);
-                    sheet->setTexture(m_window.loadTexture(sheet->getPath()));
+                    path.append(sheet->getPath());
+                    sheet->setTexture(m_window.loadTexture(path.c_str()));
 
                     assetToLoad = sheet;
                 }
                 else if (assetToLoad->getType() == Asset::FontAssetType)
                 {
                     auto font = dynamic_cast<FontAsset*>(assetToLoad);
-                    font->setFont(TTF_OpenFont(font->getPath(), font->getSize()));
+                    path.append(font->getPath());
+                    font->setFont(TTF_OpenFont(path.c_str(), font->getSize()));
 
                     assetToLoad = font;
                 }
@@ -49,7 +55,12 @@ namespace Core
                 {
                     auto audio = dynamic_cast<AudioAsset*>(assetToLoad);
                     if (audio->isMusic()) audio->setAudio(nullptr, Mix_LoadMUS(audio->getPath()));
-                    else audio->setAudio(Mix_LoadWAV(audio->getPath()), nullptr);
+                    else 
+                    {
+                        std::string path = "../";
+                        path.append(audio->getPath());
+                        audio->setAudio(Mix_LoadWAV(path.c_str()), nullptr);
+                    }
                     
                     assetToLoad = audio;
                 }
