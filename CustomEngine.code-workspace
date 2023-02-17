@@ -73,7 +73,11 @@
 			"stop_token": "cpp",
 			"thread": "cpp",
 			"xlocbuf": "cpp",
-			"xlocmes": "cpp"
+			"xlocmes": "cpp",
+			"condition_variable": "cpp",
+			"mutex": "cpp",
+			"shared_mutex": "cpp",
+			"span": "cpp"
 		}
 	}
 }

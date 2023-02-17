@@ -1,4 +1,4 @@
-#include "fontasset.h"
+#include "fontasset.hpp"
 using namespace Core;
 
 void FontAsset::setFont(TTF_Font *font)

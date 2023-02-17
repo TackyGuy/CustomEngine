@@ -1,4 +1,4 @@
-#include "animatorcomponent.h"
+#include "animatorcomponent.hpp"
 using namespace Core;
 
 

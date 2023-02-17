@@ -1,4 +1,4 @@
-#include "basecomponent.h"
+#include "basecomponent.hpp"
 using namespace Core;
 
 const size_t BaseComponent::Type = 0;

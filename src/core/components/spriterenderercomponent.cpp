@@ -1,4 +1,4 @@
-#include "spriterenderercomponent.h"
+#include "spriterenderercomponent.hpp"
 using namespace Core;
 
 

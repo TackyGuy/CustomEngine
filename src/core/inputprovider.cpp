@@ -1,4 +1,4 @@
-#include "inputprovider.h"
+#include "inputprovider.hpp"
 using namespace Core;
 
 void InputProvider::initialize()

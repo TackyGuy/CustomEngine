@@ -1,4 +1,4 @@
-#include "sprite.h"
+#include "sprite.hpp"
 using namespace Core;
 
 SDL_Rect Sprite::getRect()

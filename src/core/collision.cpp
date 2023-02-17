@@ -1,4 +1,4 @@
-#include "collision.h"
+#include "collision.hpp"
 using namespace Core;
 
 bool Collision::AABB(const BoundingBox& boxA, const BoundingBox& boxB)

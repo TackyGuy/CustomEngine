@@ -1,4 +1,4 @@
-#include "collidercomponent.h"
+#include "collidercomponent.hpp"
 using namespace Core;
 
 const size_t ColliderComponent::Type = std::hash<std::string>{}("Collider");

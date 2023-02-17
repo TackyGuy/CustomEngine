@@ -1,4 +1,4 @@
-#include "boundingbox.h"
+#include "boundingbox.hpp"
 using namespace Core;
 
 void BoundingBox::setCenter(const Vector2& center)

@@ -1,4 +1,4 @@
-#include "actormanager.h"
+#include "actormanager.hpp"
 using namespace Core;
 
 void ActorManager::registerActor(const std::shared_ptr<Actor> actor)

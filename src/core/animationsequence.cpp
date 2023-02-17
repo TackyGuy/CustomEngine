@@ -1,4 +1,4 @@
-#include "animationsequence.h"
+#include "animationsequence.hpp"
 using namespace Core;
 
 const std::string& AnimationSequence::getName() const

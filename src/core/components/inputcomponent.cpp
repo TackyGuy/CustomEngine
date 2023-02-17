@@ -1,4 +1,4 @@
-#include "inputcomponent.h"
+#include "inputcomponent.hpp"
 
 using namespace Core;
 

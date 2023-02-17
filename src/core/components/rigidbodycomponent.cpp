@@ -1,4 +1,4 @@
-#include "rigidbodycomponent.h"
+#include "rigidbodycomponent.hpp"
 using namespace Core;
 
 const size_t RigidbodyComponent::Type = std::hash<std::string>{}("Rigidbody");

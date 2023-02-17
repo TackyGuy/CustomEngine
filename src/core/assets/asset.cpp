@@ -1,4 +1,4 @@
-#include "asset.h"
+#include "asset.hpp"
 using namespace Core;
 
 const size_t Asset::SpritesheetType = std::hash<std::string>{}("Spritesheet");

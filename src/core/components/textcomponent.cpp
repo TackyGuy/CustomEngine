@@ -1,4 +1,4 @@
-#include "textcomponent.h"
+#include "textcomponent.hpp"
 using namespace Core;
 
 const size_t TextComponent::Type = std::hash<std::string>{}("TextRenderer");

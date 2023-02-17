@@ -1,4 +1,4 @@
-#include "spritesheetasset.h"
+#include "spritesheetasset.hpp"
 using namespace Core;
 
 void SpritesheetAsset::setTexture(SDL_Texture *tex)

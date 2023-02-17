@@ -1,4 +1,4 @@
-#include "transformcomponent.h"
+#include "transformcomponent.hpp"
 using namespace Core;
 
 const size_t TransformComponent::Type = std::hash<std::string>{}("TRANSFORM");

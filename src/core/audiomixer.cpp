@@ -1,4 +1,4 @@
-#include "audiomixer.h"
+#include "audiomixer.hpp"
 using namespace Core;
 
 void AudioMixer::setMusicVolume(int volume)
