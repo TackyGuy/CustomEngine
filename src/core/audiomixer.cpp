@@ -33,6 +33,7 @@ void AudioMixer::playSound(std::shared_ptr<AudioAsset> sound, double t)
     
     int channel =  Mix_PlayChannel(-1, sound->getSoundChunk(), 0);
     Mix_Volume(channel, m_soundVolume);
+    std::cout << Mix_GetError() << std::endl;
     m_lastPlayedSound = t;
 }
 

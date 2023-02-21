@@ -44,12 +44,12 @@ namespace VoltorbFlip
 
                 Loader::loadAsset("musicMain", new AudioAsset("res/sounds/gameCorner.mp3", true));
                 Loader::loadAsset("musicEnd", new AudioAsset("res/sounds/pokeLullaby.mp3", true));
-                Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/voltorb/click.wav", false));
-                Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/voltorb/select.wav", false));
-                Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/voltorb/card1.wav", false));
-                Loader::loadAsset("sfxCard2", new AudioAsset("res/sounds/voltorb/card2.wav", false));
-                Loader::loadAsset("sfxCard3", new AudioAsset("res/sounds/voltorb/card3.wav", false));
-                Loader::loadAsset("sfxExplosion", new AudioAsset("res/sounds/voltorb/explosion.wav", false));
+                Loader::loadAsset("sfxClick", new AudioAsset("res/sounds/click.wav", false));
+                Loader::loadAsset("sfxSelect", new AudioAsset("res/sounds/select.wav", false));
+                Loader::loadAsset("sfxCard1", new AudioAsset("res/sounds/card1.wav", false));
+                Loader::loadAsset("sfxCard2", new AudioAsset("res/sounds/card2.wav", false));
+                Loader::loadAsset("sfxCard3", new AudioAsset("res/sounds/card3.wav", false));
+                Loader::loadAsset("sfxExplosion", new AudioAsset("res/sounds/explosion.wav", false));
 
                 Loader::loadAsset("fontSmall", new FontAsset("res/fonts/weiholmir_regular.ttf", 12));
                 Loader::loadAsset("fontRegular", new FontAsset("res/fonts/weiholmir_regular.ttf", 14));
