@@ -55,6 +55,5 @@ namespace Core
             static void unregisterAllActors();
 
             static void updateActorMap();
-            static void updateActiveActors();
     };
 }

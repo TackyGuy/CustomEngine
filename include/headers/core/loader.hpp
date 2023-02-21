@@ -57,7 +57,6 @@ namespace Core
                     if (audio->isMusic()) audio->setAudio(nullptr, Mix_LoadMUS(audio->getPath()));
                     else 
                     {
-                        std::string path = "../";
                         path.append(audio->getPath());
                         audio->setAudio(Mix_LoadWAV(path.c_str()), nullptr);
                     }
